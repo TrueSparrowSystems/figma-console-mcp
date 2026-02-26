@@ -467,6 +467,117 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 	}
 
 	/**
+	 * Execute code in Figma with automatic retry logic for connection issues
+	 */
+	private async executeCodeWithRetry(
+		code: string,
+		timeout: number,
+	): Promise<{
+		content: Array<{ type: "text"; text: string }>;
+		isError?: boolean;
+	}> {
+		const maxRetries = 2;
+		let lastError: Error | null = null;
+
+		for (let attempt = 0; attempt <= maxRetries; attempt++) {
+			try {
+				const connector = await this.getDesktopConnector();
+				const result = await connector.executeCodeViaUI(
+					code,
+					Math.min(timeout, 30000),
+				);
+
+				return {
+					content: [
+						{
+							type: "text",
+							text: JSON.stringify(
+								{
+									success: result.success,
+									result: result.result,
+									error: result.error,
+									// Include resultAnalysis for silent failure detection
+									resultAnalysis: result.resultAnalysis,
+									// Include file context so users know which file was queried
+									fileContext: result.fileContext,
+									timestamp: Date.now(),
+									...(attempt > 0
+										? { reconnected: true, attempts: attempt + 1 }
+										: {}),
+								},
+							),
+						},
+					],
+				};
+			} catch (error) {
+				lastError =
+					error instanceof Error ? error : new Error(String(error));
+				const errorMessage = lastError.message;
+
+				// Check if it's a detached frame error - auto-reconnect
+				if (
+					errorMessage.includes("detached Frame") ||
+					errorMessage.includes("Execution context was destroyed") ||
+					errorMessage.includes("Target closed")
+				) {
+					logger.warn(
+						{ attempt, error: errorMessage },
+						"Detached frame detected, forcing reconnection",
+					);
+
+					// Clear cached connector and force browser reconnection
+					this.desktopConnector = null;
+
+					if (this.browserManager && attempt < maxRetries) {
+						try {
+							await this.browserManager.forceReconnect();
+
+							// Reinitialize console monitor with new page
+							if (this.consoleMonitor) {
+								this.consoleMonitor.stopMonitoring();
+								const page = await this.browserManager.getPage();
+								await this.consoleMonitor.startMonitoring(page);
+							}
+
+							logger.info("Reconnection successful, retrying execution");
+							continue; // Retry the execution
+						} catch (reconnectError) {
+							logger.error(
+								{ error: reconnectError },
+								"Failed to reconnect",
+							);
+						}
+					}
+				}
+
+				// Non-recoverable error or max retries exceeded
+				break;
+			}
+		}
+
+		// All retries failed
+		logger.error(
+			{ error: lastError },
+			"Failed to execute code after retries",
+		);
+		return {
+			content: [
+				{
+					type: "text",
+					text: JSON.stringify(
+						{
+							error: lastError?.message || "Unknown error",
+							message: "Failed to execute code in Figma plugin context",
+							hint: "Make sure the Desktop Bridge plugin is running in Figma",
+						},
+					),
+				},
+			],
+			isError: true,
+		};
+	}
+
+	/**
 	 * Register all MCP tools
 	 */
 	private registerTools(): void {
@@ -1743,6 +1854,19 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 			},
 		);
 
+		// Tool: Execute arbitrary code in Figma plugin context (Power Tool)
+		this.server.tool(
+			"figma_get_all_component_names",
+			`Get all unique component and component set names in the Figma file. Efficiently traverses the document with a shallow depth limit to avoid timeouts in large files. Use this to quickly understand the components used in the design without fetching full details.`,
+			{},
+			async () => {
+				const code = "\n// Get ALL unique component names efficiently\nconst allComponentSets = new Set();\nconst allIndividualComponents = new Set();\nlet totalProcessed = 0;\n\nfunction findComponents(node, depth = 0) {\n  if (depth > 3) return; // Shallow depth for speed\n  \n  if (node.type === 'COMPONENT_SET') {\n    allComponentSets.add(node.name);\n  } else if (node.type === 'COMPONENT' && node.parent.type !== 'COMPONENT_SET') {\n    allIndividualComponents.add(node.name);\n  }\n  \n  if ('children' in node && depth < 3) {\n    for (const child of node.children) {\n      findComponents(child, depth + 1);\n    }\n  }\n}\n\n// Process all pages\nfor (const page of figma.root.children) {\n  findComponents(page);\n  totalProcessed++;\n  if (totalProcessed % 10 === 0) {\n    console.log(`Processed ${totalProcessed} pages, found ${allComponentSets.size} component sets`);\n  }\n}\n\nreturn {\n  totalPagesProcessed: totalProcessed,\n  componentSets: Array.from(allComponentSets).sort(),\n  individualComponents: Array.from(allIndividualComponents).sort(),\n  totalComponentSets: allComponentSets.size,\n  totalIndividualComponents: allIndividualComponents.size\n};\n";
+				const timeout = 25000; // 25 seconds for complex operations
+				
+				return this.executeCodeWithRetry(code, timeout);
+			},
+		);
+
 		// ============================================================================
 		// WRITE OPERATION TOOLS - Figma Design Manipulation
 		// ============================================================================
@@ -1775,105 +1899,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 					),
 			},
 			async ({ code, timeout }) => {
-				const maxRetries = 2;
-				let lastError: Error | null = null;
-
-				for (let attempt = 0; attempt <= maxRetries; attempt++) {
-					try {
-						const connector = await this.getDesktopConnector();
-						const result = await connector.executeCodeViaUI(
-							code,
-							Math.min(timeout, 30000),
-						);
-
-						return {
-							content: [
-								{
-									type: "text",
-									text: JSON.stringify(
-										{
-											success: result.success,
-											result: result.result,
-											error: result.error,
-											// Include resultAnalysis for silent failure detection
-											resultAnalysis: result.resultAnalysis,
-											// Include file context so users know which file was queried
-											fileContext: result.fileContext,
-											timestamp: Date.now(),
-											...(attempt > 0
-												? { reconnected: true, attempts: attempt + 1 }
-												: {}),
-										},
-									),
-								},
-							],
-						};
-					} catch (error) {
-						lastError =
-							error instanceof Error ? error : new Error(String(error));
-						const errorMessage = lastError.message;
-
-						// Check if it's a detached frame error - auto-reconnect
-						if (
-							errorMessage.includes("detached Frame") ||
-							errorMessage.includes("Execution context was destroyed") ||
-							errorMessage.includes("Target closed")
-						) {
-							logger.warn(
-								{ attempt, error: errorMessage },
-								"Detached frame detected, forcing reconnection",
-							);
-
-							// Clear cached connector and force browser reconnection
-							this.desktopConnector = null;
-
-							if (this.browserManager && attempt < maxRetries) {
-								try {
-									await this.browserManager.forceReconnect();
-
-									// Reinitialize console monitor with new page
-									if (this.consoleMonitor) {
-										this.consoleMonitor.stopMonitoring();
-										const page = await this.browserManager.getPage();
-										await this.consoleMonitor.startMonitoring(page);
-									}
-
-									logger.info("Reconnection successful, retrying execution");
-									continue; // Retry the execution
-								} catch (reconnectError) {
-									logger.error(
-										{ error: reconnectError },
-										"Failed to reconnect",
-									);
-								}
-							}
-						}
-
-						// Non-recoverable error or max retries exceeded
-						break;
-					}
-				}
-
-				// All retries failed
-				logger.error(
-					{ error: lastError },
-					"Failed to execute code after retries",
-				);
-				return {
-					content: [
-						{
-							type: "text",
-							text: JSON.stringify(
-								{
-									error: lastError?.message || "Unknown error",
-									message: "Failed to execute code in Figma plugin context",
-									hint: "Make sure the Desktop Bridge plugin is running in Figma",
-								},
-							),
-						},
-					],
-					isError: true,
-				};
+				return this.executeCodeWithRetry(code, timeout);
 			},
 		);
 
