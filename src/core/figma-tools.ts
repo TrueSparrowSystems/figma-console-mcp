@@ -708,6 +708,8 @@ function resolveVariableAliases(
 interface FigmaAPIToolsOptions {
 	/** When true, suppresses Desktop Bridge mentions in tool descriptions (for remote/cloud mode) */
 	isRemoteMode?: boolean;
+	/** When true, only read-only tools are registered (write tools like figma_set_instance_properties are skipped) */
+	readOnly?: boolean;
 }
 
 /**
@@ -725,6 +727,7 @@ export function registerFigmaAPITools(
 	getDesktopConnector?: () => Promise<any>,
 ) {
 	const isRemoteMode = options?.isRemoteMode ?? false;
+	const readOnly = options?.readOnly ?? false;
 	// Tool 8: Get File Data (General Purpose)
 	// NOTE: For specific use cases, consider using specialized tools:
 	// - figma_get_component_for_development: For UI component implementation
@@ -3470,121 +3473,120 @@ export function registerFigmaAPITools(
 		}
 	);
 
-	// Tool 16: Set Instance Properties (Desktop Bridge)
-	// Updates component properties on an instance using setProperties()
-	// This is the correct way to update TEXT/BOOLEAN/VARIANT properties on component instances
-	server.tool(
-		"figma_set_instance_properties",
-		"Update component properties on a component instance. IMPORTANT: Use this tool instead of trying to edit text nodes directly when working with component instances. Components often expose TEXT, BOOLEAN, INSTANCE_SWAP, and VARIANT properties that control their content. Direct text node editing may fail silently if the component uses properties. This tool handles the #nodeId suffix pattern automatically. Requires Desktop Bridge connection.",
-		{
-			nodeId: z
-				.string()
-				.describe(
-					"ID of the INSTANCE node to update (e.g., '1:234'). Must be a component instance, not a regular frame."
-				),
-			properties: z
-				.record(z.string(), z.union([z.string(), z.boolean()]))
-				.describe(
-					"Properties to set. Keys are property names (e.g., 'Label', 'Show Icon', 'Size'). " +
-					"Values are strings for TEXT/VARIANT properties, booleans for BOOLEAN properties. " +
-					"The tool automatically handles the #nodeId suffix for TEXT/BOOLEAN/INSTANCE_SWAP properties."
-				),
-		},
-		async ({ nodeId, properties }) => {
-			try {
-				logger.info({ nodeId, properties: Object.keys(properties) }, "Setting instance properties via Desktop Bridge");
+	// Tool 16: Set Instance Properties (Desktop Bridge) — write tool, skipped when readOnly
+	if (!readOnly) {
+		server.tool(
+			"figma_set_instance_properties",
+			"Update component properties on a component instance. IMPORTANT: Use this tool instead of trying to edit text nodes directly when working with component instances. Components often expose TEXT, BOOLEAN, INSTANCE_SWAP, and VARIANT properties that control their content. Direct text node editing may fail silently if the component uses properties. This tool handles the #nodeId suffix pattern automatically. Requires Desktop Bridge connection.",
+			{
+				nodeId: z
+					.string()
+					.describe(
+						"ID of the INSTANCE node to update (e.g., '1:234'). Must be a component instance, not a regular frame."
+					),
+				properties: z
+					.record(z.string(), z.union([z.string(), z.boolean()]))
+					.describe(
+						"Properties to set. Keys are property names (e.g., 'Label', 'Show Icon', 'Size'). " +
+						"Values are strings for TEXT/VARIANT properties, booleans for BOOLEAN properties. " +
+						"The tool automatically handles the #nodeId suffix for TEXT/BOOLEAN/INSTANCE_SWAP properties."
+					),
+			},
+			async ({ nodeId, properties }) => {
+				try {
+					logger.info({ nodeId, properties: Object.keys(properties) }, "Setting instance properties via Desktop Bridge");
 
-				let result = null;
+					let result = null;
 
-				// Use the connector abstraction (WebSocket transport)
-				if (getDesktopConnector) {
-					const connector = await getDesktopConnector();
-					logger.info({ transport: connector.getTransportType?.() || 'unknown' }, "Instance properties via connector");
-					result = await connector.setInstanceProperties(nodeId, properties);
-				}
+					// Use the connector abstraction (supports both CDP and WebSocket)
+					if (getDesktopConnector) {
+						const connector = await getDesktopConnector();
+						logger.info({ transport: connector.getTransportType?.() || 'unknown' }, "Instance properties via connector");
+						result = await connector.setInstanceProperties(nodeId, properties);
+					}
 
-				// Legacy CDP fallback (only when no connector factory is available)
-				if (!result && !getDesktopConnector) {
-					const browserManager = getBrowserManager?.();
-					if (!browserManager) {
+					// Legacy CDP fallback (only when no connector factory is available)
+					if (!result && !getDesktopConnector) {
+						const browserManager = getBrowserManager?.();
+						if (!browserManager) {
+							throw new Error(
+								"Desktop Bridge not available. To set instance properties:\n" +
+								"1. Open your Figma file in Figma Desktop\n" +
+								"2. Install and run the 'Figma Console MCP' plugin\n" +
+								"3. Ensure the plugin shows 'MCP ready' status"
+							);
+						}
+
+						if (ensureInitialized) {
+							await ensureInitialized();
+						}
+
+						const page = await browserManager.getPage();
+						const frames = page.frames();
+
+						for (const frame of frames) {
+							try {
+								const hasFunction = await frame.evaluate('typeof window.setInstanceProperties === "function"');
+								if (hasFunction) {
+									result = await frame.evaluate(
+										`window.setInstanceProperties(${JSON.stringify(nodeId)}, ${JSON.stringify(properties)})`
+									);
+									break;
+								}
+							} catch {
+								continue;
+							}
+						}
+					}
+
+					if (!result) {
 						throw new Error(
-							"Desktop Bridge not available. To set instance properties:\n" +
-							"1. Open your Figma file in Figma Desktop\n" +
-							"2. Install and run the 'Figma Console MCP' plugin\n" +
-							"3. Ensure the plugin shows 'MCP ready' status"
+							"Desktop Bridge plugin not found. Ensure the 'Figma Console MCP' plugin is running in Figma Desktop."
 						);
 					}
 
-					if (ensureInitialized) {
-						await ensureInitialized();
+					if (!result.success) {
+						throw new Error(result.error || "Failed to set instance properties");
 					}
 
-					const page = await browserManager.getPage();
-					const frames = page.frames();
-
-					for (const frame of frames) {
-						try {
-							const hasFunction = await frame.evaluate('typeof window.setInstanceProperties === "function"');
-							if (hasFunction) {
-								result = await frame.evaluate(
-									`window.setInstanceProperties(${JSON.stringify(nodeId)}, ${JSON.stringify(properties)})`
-								);
-								break;
-							}
-						} catch {
-							continue;
-						}
-					}
+					return {
+						content: [
+							{
+								type: "text",
+								text: JSON.stringify({
+									success: true,
+									instance: result.instance,
+									metadata: {
+										note: "Instance properties updated successfully. Use figma_capture_screenshot to verify visual changes.",
+									},
+								}),
+							},
+						],
+					};
+				} catch (error) {
+					logger.error({ error }, "Failed to set instance properties");
+					const errorMessage = error instanceof Error ? error.message : String(error);
+					return {
+						content: [
+							{
+								type: "text",
+								text: JSON.stringify({
+									error: errorMessage,
+									message: "Failed to set instance properties via Desktop Bridge",
+									suggestions: [
+										"Verify the node is a component INSTANCE (not a regular frame)",
+										"Check available properties with figma_get_component first",
+										"Ensure property names match exactly (case-sensitive)",
+										"For TEXT properties, provide string values",
+										"For BOOLEAN properties, provide true/false",
+									],
+								}),
+							},
+						],
+						isError: true,
+					};
 				}
-
-				if (!result) {
-					throw new Error(
-						"Desktop Bridge plugin not found. Ensure the 'Figma Console MCP' plugin is running in Figma Desktop."
-					);
-				}
-
-				if (!result.success) {
-					throw new Error(result.error || "Failed to set instance properties");
-				}
-
-				return {
-					content: [
-						{
-							type: "text",
-							text: JSON.stringify({
-								success: true,
-								instance: result.instance,
-								metadata: {
-									note: "Instance properties updated successfully. Use figma_capture_screenshot to verify visual changes.",
-								},
-							}),
-						},
-					],
-				};
-			} catch (error) {
-				logger.error({ error }, "Failed to set instance properties");
-				const errorMessage = error instanceof Error ? error.message : String(error);
-				return {
-					content: [
-						{
-							type: "text",
-							text: JSON.stringify({
-								error: errorMessage,
-								message: "Failed to set instance properties via Desktop Bridge",
-								suggestions: [
-									"Verify the node is a component INSTANCE (not a regular frame)",
-									"Check available properties with figma_get_component first",
-									"Ensure property names match exactly (case-sensitive)",
-									"For TEXT properties, provide string values",
-									"For BOOLEAN properties, provide true/false",
-								],
-							}),
-						},
-					],
-					isError: true,
-				};
 			}
-		}
-	);
-
+		);
+	}
 }

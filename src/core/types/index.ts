@@ -75,6 +75,8 @@ export interface ServerConfig {
   console: ConsoleConfig;
   screenshots: ScreenshotConfig;
   local?: LocalModeConfig;
+  /** When true, only read-only tools are registered (no document/comments mutations). Can be set via FIGMA_READ_ONLY=1. */
+  readOnly?: boolean;
 }
 
 /**

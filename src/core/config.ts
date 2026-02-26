@@ -31,6 +31,7 @@ function detectMode(): 'local' | 'cloudflare' {
  */
 const DEFAULT_CONFIG: ServerConfig = {
   mode: detectMode(),
+  readOnly: process.env.FIGMA_READ_ONLY === '1' || process.env.FIGMA_READ_ONLY === 'true',
   browser: {
     headless: false,
     args: [
@@ -106,6 +107,7 @@ export function loadConfig(): ServerConfig {
 function mergeConfig(defaults: ServerConfig, overrides: Partial<ServerConfig>): ServerConfig {
   return {
     mode: overrides.mode || defaults.mode,
+    readOnly: overrides.readOnly ?? defaults.readOnly,
     browser: {
       ...defaults.browser,
       ...(overrides.browser || {}),

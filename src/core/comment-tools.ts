@@ -20,8 +20,9 @@ export function registerCommentTools(
 	server: McpServer,
 	getFigmaAPI: () => Promise<FigmaAPI>,
 	getCurrentUrl: () => string | null,
-	options?: { isRemoteMode?: boolean },
+	options?: { isRemoteMode?: boolean; readOnly?: boolean },
 ): void {
+	const readOnly = options?.readOnly ?? false;
 	// -----------------------------------------------------------------------
 	// Tool: figma_get_comments
 	// -----------------------------------------------------------------------
@@ -130,215 +131,219 @@ export function registerCommentTools(
 	);
 
 	// -----------------------------------------------------------------------
-	// Tool: figma_post_comment
+	// Tool: figma_post_comment (write — skipped when readOnly)
 	// -----------------------------------------------------------------------
-	server.tool(
-		"figma_post_comment",
-		"Post a comment on a Figma file, optionally pinned to a specific design node. Use after figma_check_design_parity to notify designers of drift when code is the canonical source. Supports replies to existing comment threads. Limitation: @mentions are a Figma UI-only feature — including '@name' in the message renders as plain text, not a clickable mention tag, and does not trigger Figma notifications.",
-		{
-			fileUrl: z
-				.string()
-				.url()
-				.optional()
-				.describe("Figma file URL. Uses current URL if omitted."),
-			message: z
-				.string()
-				.describe("The comment message text. Supports basic formatting."),
-			node_id: z
-				.string()
-				.optional()
-				.describe("Node ID to pin the comment to (e.g., '695:313'). Comment appears on that element in Figma."),
-			x: z
-				.number()
-				.optional()
-				.describe("X coordinate for comment placement (absolute canvas position). Used with node_id."),
-			y: z
-				.number()
-				.optional()
-				.describe("Y coordinate for comment placement (absolute canvas position). Used with node_id."),
-			reply_to_comment_id: z
-				.string()
-				.optional()
-				.describe("ID of an existing comment to reply to. Creates a threaded reply instead of a new top-level comment."),
-		},
-		async ({ fileUrl, message, node_id, x, y, reply_to_comment_id }) => {
-			try {
-				const url = fileUrl || getCurrentUrl();
-				if (!url) {
-					return {
-						content: [
-							{
-								type: "text" as const,
-								text: JSON.stringify({
-									error: "no_file_url",
-									message:
-										"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma.",
-								}),
-							},
-						],
-						isError: true,
-					};
-				}
-
-				const fileKey = extractFileKey(url);
-				if (!fileKey) {
-					return {
-						content: [
-							{
-								type: "text" as const,
-								text: JSON.stringify({
-									error: "invalid_url",
-									message: `Invalid Figma URL: ${url}`,
-								}),
-							},
-						],
-						isError: true,
-					};
-				}
-
-				logger.info({ fileKey, node_id, reply_to_comment_id }, "Posting comment");
-
-				const api = await getFigmaAPI();
-
-				// Build client_meta for pinning to a node/position
-				// Figma API requires node_offset when node_id is present — default to (0,0) if not specified
-				let clientMeta: { node_id?: string; node_offset?: { x: number; y: number } } | undefined;
-				if (node_id) {
-					clientMeta = {
-						node_id,
-						node_offset: { x: x ?? 0, y: y ?? 0 },
-					};
-				}
-
-				const result = await api.postComment(
-					fileKey,
-					message,
-					clientMeta,
-					reply_to_comment_id,
-				);
-
-				return {
-					content: [
-						{
-							type: "text" as const,
-							text: JSON.stringify({
-								success: true,
-								comment: {
-									id: result.id,
-									message: result.message,
-									created_at: result.created_at,
-									user: result.user,
-									client_meta: result.client_meta,
-									order_id: result.order_id,
+	if (!readOnly) {
+		server.tool(
+			"figma_post_comment",
+			"Post a comment on a Figma file, optionally pinned to a specific design node. Use after figma_check_design_parity to notify designers of drift when code is the canonical source. Supports replies to existing comment threads. Limitation: @mentions are a Figma UI-only feature — including '@name' in the message renders as plain text, not a clickable mention tag, and does not trigger Figma notifications.",
+			{
+				fileUrl: z
+					.string()
+					.url()
+					.optional()
+					.describe("Figma file URL. Uses current URL if omitted."),
+				message: z
+					.string()
+					.describe("The comment message text. Supports basic formatting."),
+				node_id: z
+					.string()
+					.optional()
+					.describe("Node ID to pin the comment to (e.g., '695:313'). Comment appears on that element in Figma."),
+				x: z
+					.number()
+					.optional()
+					.describe("X coordinate for comment placement (absolute canvas position). Used with node_id."),
+				y: z
+					.number()
+					.optional()
+					.describe("Y coordinate for comment placement (absolute canvas position). Used with node_id."),
+				reply_to_comment_id: z
+					.string()
+					.optional()
+					.describe("ID of an existing comment to reply to. Creates a threaded reply instead of a new top-level comment."),
+			},
+			async ({ fileUrl, message, node_id, x, y, reply_to_comment_id }) => {
+				try {
+					const url = fileUrl || getCurrentUrl();
+					if (!url) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: JSON.stringify({
+										error: "no_file_url",
+										message:
+											"No Figma file URL available. Pass the fileUrl parameter, call figma_navigate (CDP mode), or ensure the Desktop Bridge plugin is connected (WebSocket mode).",
+									}),
 								},
-							}),
-						},
-					],
-				};
-			} catch (error) {
-				const message_text = error instanceof Error ? error.message : String(error);
-				logger.error({ error }, "Failed to post comment");
+							],
+							isError: true,
+						};
+					}
 
-				return {
-					content: [
-						{
-							type: "text" as const,
-							text: JSON.stringify({
-								error: "post_comment_failed",
-								message: `Cannot post comment. ${message_text}`,
-							}),
-						},
-					],
-					isError: true,
-				};
-			}
-		},
-	);
+					const fileKey = extractFileKey(url);
+					if (!fileKey) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: JSON.stringify({
+										error: "invalid_url",
+										message: `Invalid Figma URL: ${url}`,
+									}),
+								},
+							],
+							isError: true,
+						};
+					}
 
-	// -----------------------------------------------------------------------
-	// Tool: figma_delete_comment
-	// -----------------------------------------------------------------------
-	server.tool(
-		"figma_delete_comment",
-		"Delete a comment from a Figma file by its comment ID. Use figma_get_comments to find comment IDs first.",
-		{
-			fileUrl: z
-				.string()
-				.url()
-				.optional()
-				.describe("Figma file URL. Uses current URL if omitted."),
-			comment_id: z
-				.string()
-				.describe("The ID of the comment to delete. Get IDs from figma_get_comments."),
-		},
-		async ({ fileUrl, comment_id }) => {
-			try {
-				const url = fileUrl || getCurrentUrl();
-				if (!url) {
+					logger.info({ fileKey, node_id, reply_to_comment_id }, "Posting comment");
+
+					const api = await getFigmaAPI();
+
+					// Build client_meta for pinning to a node/position
+					// Figma API requires node_offset when node_id is present — default to (0,0) if not specified
+					let clientMeta: { node_id?: string; node_offset?: { x: number; y: number } } | undefined;
+					if (node_id) {
+						clientMeta = {
+							node_id,
+							node_offset: { x: x ?? 0, y: y ?? 0 },
+						};
+					}
+
+					const result = await api.postComment(
+						fileKey,
+						message,
+						clientMeta,
+						reply_to_comment_id,
+					);
+
 					return {
 						content: [
 							{
 								type: "text" as const,
 								text: JSON.stringify({
-									error: "no_file_url",
-									message:
-										"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma.",
+									success: true,
+									comment: {
+										id: result.id,
+										message: result.message,
+										created_at: result.created_at,
+										user: result.user,
+										client_meta: result.client_meta,
+										order_id: result.order_id,
+									},
+								}),
+							},
+						],
+					};
+				} catch (error) {
+					const message_text = error instanceof Error ? error.message : String(error);
+					logger.error({ error }, "Failed to post comment");
+
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: JSON.stringify({
+									error: "post_comment_failed",
+									message: `Cannot post comment. ${message_text}`,
 								}),
 							},
 						],
 						isError: true,
 					};
 				}
+			},
+		);
+	}
 
-				const fileKey = extractFileKey(url);
-				if (!fileKey) {
+	// -----------------------------------------------------------------------
+	// Tool: figma_delete_comment (write — skipped when readOnly)
+	// -----------------------------------------------------------------------
+	if (!readOnly) {
+		server.tool(
+			"figma_delete_comment",
+			"Delete a comment from a Figma file by its comment ID. Use figma_get_comments to find comment IDs first.",
+			{
+				fileUrl: z
+					.string()
+					.url()
+					.optional()
+					.describe("Figma file URL. Uses current URL if omitted."),
+				comment_id: z
+					.string()
+					.describe("The ID of the comment to delete. Get IDs from figma_get_comments."),
+			},
+			async ({ fileUrl, comment_id }) => {
+				try {
+					const url = fileUrl || getCurrentUrl();
+					if (!url) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: JSON.stringify({
+										error: "no_file_url",
+										message:
+											"No Figma file URL available. Pass the fileUrl parameter, call figma_navigate (CDP mode), or ensure the Desktop Bridge plugin is connected (WebSocket mode).",
+									}),
+								},
+							],
+							isError: true,
+						};
+					}
+
+					const fileKey = extractFileKey(url);
+					if (!fileKey) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: JSON.stringify({
+										error: "invalid_url",
+										message: `Invalid Figma URL: ${url}`,
+									}),
+								},
+							],
+							isError: true,
+						};
+					}
+
+					logger.info({ fileKey, comment_id }, "Deleting comment");
+
+					const api = await getFigmaAPI();
+					await api.deleteComment(fileKey, comment_id);
+
 					return {
 						content: [
 							{
 								type: "text" as const,
 								text: JSON.stringify({
-									error: "invalid_url",
-									message: `Invalid Figma URL: ${url}`,
+									success: true,
+									deleted_comment_id: comment_id,
+								}),
+							},
+						],
+					};
+				} catch (error) {
+					const message = error instanceof Error ? error.message : String(error);
+					logger.error({ error }, "Failed to delete comment");
+
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: JSON.stringify({
+									error: "delete_comment_failed",
+									message: `Cannot delete comment. ${message}`,
 								}),
 							},
 						],
 						isError: true,
 					};
 				}
-
-				logger.info({ fileKey, comment_id }, "Deleting comment");
-
-				const api = await getFigmaAPI();
-				await api.deleteComment(fileKey, comment_id);
-
-				return {
-					content: [
-						{
-							type: "text" as const,
-							text: JSON.stringify({
-								success: true,
-								deleted_comment_id: comment_id,
-							}),
-						},
-					],
-				};
-			} catch (error) {
-				const message = error instanceof Error ? error.message : String(error);
-				logger.error({ error }, "Failed to delete comment");
-
-				return {
-					content: [
-						{
-							type: "text" as const,
-							text: JSON.stringify({
-								error: "delete_comment_failed",
-								message: `Cannot delete comment. ${message}`,
-							}),
-						},
-					],
-					isError: true,
-				};
-			}
-		},
-	);
+			},
+		);
+	}
 }
