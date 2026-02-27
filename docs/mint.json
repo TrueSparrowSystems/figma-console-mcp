@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Figma Console MCP",
+  "name": "Figma Sparrow MCP",
   "version": "1.9.0",
   "theme": "quill",
   "logo": {
@@ -20,7 +20,7 @@
   },
   "metadata": {
     "og:image": "/images/og-image.jpg",
-    "og:title": "Figma Console MCP - Turn Your Design System Into a Living API",
+    "og:title": "Figma Sparrow MCP - Turn Your Design System Into a Living API",
     "og:description": "The most comprehensive MCP server for Figma. 56+ tools give AI assistants deep access to design tokens, components, variables, and programmatic design creation.",
     "twitter:card": "summary_large_image",
     "twitter:image": "/images/og-image.jpg"
@@ -36,18 +36,8 @@
     {
       "name": "GitHub",
       "icon": "github",
-      "url": "https://github.com/southleft/figma-console-mcp"
+      "url": "https://github.com/TrueSparrowSystems/figma-sparrow-mcp"
     },
-    {
-      "name": "npm",
-      "icon": "npm",
-      "url": "https://www.npmjs.com/package/figma-console-mcp"
-    },
-    {
-      "name": "Changelog",
-      "icon": "clock-rotate-left",
-      "url": "https://github.com/southleft/figma-console-mcp/blob/main/CHANGELOG.md"
-    }
   ],
   "navigation": [
     {
@@ -55,8 +45,7 @@
       "pages": [
         "index",
         "introduction",
-        "setup",
-        "mode-comparison"
+        "setup"
       ]
     },
     {
@@ -80,7 +69,7 @@
     }
   ],
   "footerSocials": {
-    "github": "https://github.com/southleft/figma-console-mcp"
+    "github": "https://github.com/TrueSparrowSystems/figma-sparrow-mcp"
   },
   "feedback": {
     "thumbsRating": true,

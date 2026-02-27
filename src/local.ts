@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Figma Console MCP Server - Local Mode
+ * Figma Sparrow MCP Server - Local Mode
  *
  * Entry point for local MCP server that connects to Figma Desktop
  * via the WebSocket Desktop Bridge plugin.
@@ -10,7 +10,7 @@
  * suitable for local IDE integrations and development workflows.
  *
  * Requirements:
- * - Desktop Bridge plugin open in Figma (Plugins → Development → Figma Desktop Bridge)
+ * - Sparrow Bridge plugin open in Figma (Plugins → Development → Figma Sparrow Bridge)
  * - FIGMA_ACCESS_TOKEN environment variable for API access
  */
 
@@ -82,11 +82,11 @@ class LocalFigmaConsoleMCP {
 	constructor() {
 		this.server = new McpServer(
 			{
-				name: "Figma Console MCP (Local)",
+				name: "Figma Sparrow MCP (Local)",
 				version: "0.1.0",
 			},
 			{
-				instructions: `## Figma Console MCP - Visual Design Workflow
+				instructions: `## Figma Sparrow MCP - Visual Design Workflow
 
 This MCP server enables AI-assisted design creation in Figma. Follow these mandatory workflows:
 
@@ -147,7 +147,7 @@ Batch tools are 10-50x faster because they execute in a single roundtrip. Use in
 ### DESIGN BEST PRACTICES
 For component-specific design guidance (sizing, proportions, accessibility, etc.), query the Design Systems Assistant MCP which provides up-to-date best practices for any component type.
 
-If Design Systems Assistant MCP is not available, install it from: https://github.com/southleft/design-systems-mcp`,
+If Design Systems Assistant MCP is not available, install it from: https://github.com/TrueSparrowSystems/design-systems-mcp`,
 			},
 		);
 	}
@@ -224,7 +224,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		const wsPort = this.wsActualPort || this.wsPreferredPort || DEFAULT_WS_PORT;
 		throw new Error(
 			"Cannot connect to Figma Desktop.\n\n" +
-			"Open the Desktop Bridge plugin in Figma (Plugins → Development → Figma Desktop Bridge).\n" +
+			"Open the Sparrow Bridge plugin in Figma (Plugins → Development → Figma Sparrow Bridge).\n" +
 			`The plugin will connect automatically to ws://localhost:${wsPort}.\n` +
 			"No special launch flags needed."
 		);
@@ -270,22 +270,21 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 			// The user may open the plugin later
 			logger.warn(
 				`WebSocket transport not available yet.\n\n` +
-				`Open the Desktop Bridge plugin in Figma (Plugins → Development → Figma Desktop Bridge).\n` +
+				`Open the Sparrow Bridge plugin in Figma (Plugins → Development → Figma Sparrow Bridge).\n` +
 				`No special launch flags needed — the plugin connects automatically.`,
 			);
 		}
 	}
 
 	/**
-	 * Resolve the path to the Desktop Bridge plugin manifest.
-	 * Works for both NPX installs (buried in npm cache) and local git clones.
+	 * Resolve the path to the Sparrow Bridge plugin manifest.
 	 */
 	private getPluginPath(): string | null {
 		try {
 			const thisFile = fileURLToPath(import.meta.url);
-			// From dist/local.js → go up to package root, then into figma-desktop-bridge
+			// From dist/local.js → go up to package root, then into figma-sparrow-bridge
 			const packageRoot = dirname(dirname(thisFile));
-			const manifestPath = resolve(packageRoot, "figma-desktop-bridge", "manifest.json");
+			const manifestPath = resolve(packageRoot, "figma-sparrow-bridge", "manifest.json");
 			return existsSync(manifestPath) ? manifestPath : null;
 		} catch {
 			return null;
@@ -568,7 +567,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 						{
 							error: lastError?.message || "Unknown error",
 							message: "Failed to execute code in Figma plugin context",
-							hint: "Make sure the Desktop Bridge plugin is running in Figma",
+							hint: "Make sure the Sparrow Bridge plugin is running in Figma",
 						},
 					),
 				},
@@ -629,7 +628,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 							}
 						} catch {
 							throw new Error(
-								"No console monitoring available. Open the Desktop Bridge plugin in Figma for console capture.",
+								"No console monitoring available. Open the Sparrow Bridge plugin in Figma for console capture.",
 							);
 						}
 					}
@@ -645,13 +644,13 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 
 					if (source === "websocket") {
 						responseData.ai_instruction =
-							"Console logs captured via WebSocket Bridge (plugin sandbox only). These logs include output from the Desktop Bridge plugin's code.js context.";
+							"Console logs captured via WebSocket Bridge (plugin sandbox only). These logs include output from the Sparrow Bridge plugin's code.js context.";
 					}
 
 					if (logs.length === 0) {
 						if (source === "websocket") {
 							responseData.ai_instruction =
-								"No console logs captured yet via WebSocket. The Desktop Bridge plugin is connected and monitoring. Plugin console output (console.log/warn/error from code.js) will appear here automatically. Try running a design operation that triggers plugin logging.";
+								"No console logs captured yet via WebSocket. The Sparrow Bridge plugin is connected and monitoring. Plugin console output (console.log/warn/error from code.js) will appear here automatically. Try running a design operation that triggers plugin logging.";
 						} else {
 							const isMonitoring = (status as any).isMonitoring;
 							if (!isMonitoring) {
@@ -686,8 +685,8 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										error: errorMessage,
 										message: "Failed to retrieve console logs.",
 										troubleshooting: [
-											"Open the Desktop Bridge plugin in Figma for WebSocket-based console capture",
-											"Ensure the Desktop Bridge plugin is open and connected in Figma",
+											"Open the Sparrow Bridge plugin in Figma for WebSocket-based console capture",
+											"Ensure the Sparrow Bridge plugin is open and connected in Figma",
 										],
 									},
 								),
@@ -733,7 +732,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 
 					if (!currentUrl) {
 						throw new Error(
-							"No Figma file open. Either provide a nodeId parameter, call figma_navigate, or ensure the Desktop Bridge plugin is connected.",
+							"No Figma file open. Either provide a nodeId parameter, call figma_navigate, or ensure the Sparrow Bridge plugin is connected.",
 						);
 					}
 
@@ -871,7 +870,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 
 				if (!useCDP && !useWS) {
 					throw new Error(
-						"No console monitoring available. Open the Desktop Bridge plugin in Figma for console capture.",
+						"No console monitoring available. Open the Sparrow Bridge plugin in Figma for console capture.",
 					);
 				}
 
@@ -967,7 +966,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 						await this.ensureInitialized();
 						if (!this.browserManager) {
 							throw new Error(
-								"No connection available. Open the Desktop Bridge plugin in Figma.",
+								"No connection available. Open the Sparrow Bridge plugin in Figma.",
 							);
 						}
 						if (clearConsoleBefore && this.consoleMonitor) {
@@ -1013,8 +1012,8 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										error: String(error),
 										message: "Failed to reload plugin",
 										troubleshooting: [
-											"Open the Desktop Bridge plugin in Figma for WebSocket-based reload",
-											"Ensure the Desktop Bridge plugin is open and connected in Figma",
+											"Open the Sparrow Bridge plugin in Figma for WebSocket-based reload",
+											"Ensure the Sparrow Bridge plugin is open and connected in Figma",
 										],
 									},
 								),
@@ -1049,7 +1048,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 							clearedCount = this.consoleMonitor.clear();
 						} else {
 							throw new Error(
-								"No console monitoring available. Open the Desktop Bridge plugin in Figma.",
+								"No console monitoring available. Open the Sparrow Bridge plugin in Figma.",
 							);
 						}
 					}
@@ -1201,9 +1200,9 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 												})),
 												requestedFileKey,
 												message:
-													"The requested file is not connected via WebSocket. Open the Desktop Bridge plugin in the target file — it will auto-connect. Use figma_list_open_files to see all connected files.",
+													"The requested file is not connected via WebSocket. Open the Sparrow Bridge plugin in the target file — it will auto-connect. Use figma_list_open_files to see all connected files.",
 												ai_instruction:
-													"The requested file is not in the connected files list. The user needs to open the Desktop Bridge plugin in the target Figma file. Once opened, it will auto-connect and appear in figma_list_open_files. Then use figma_navigate to switch to it.",
+													"The requested file is not in the connected files list. The user needs to open the Sparrow Bridge plugin in the target Figma file. Once opened, it will auto-connect and appear in figma_list_open_files. Then use figma_navigate to switch to it.",
 											},
 										),
 									},
@@ -1211,7 +1210,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 							};
 						}
 						throw new Error(
-							"No connection available. Open the Desktop Bridge plugin in Figma.",
+							"No connection available. Open the Sparrow Bridge plugin in Figma.",
 						);
 					}
 
@@ -1290,8 +1289,8 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										error: errorMessage,
 										message: "Failed to navigate to Figma URL",
 										troubleshooting: [
-											"In WebSocket mode: navigate manually in Figma and ensure Desktop Bridge plugin is open",
-											"Ensure the Desktop Bridge plugin is open in the target file",
+											"In WebSocket mode: navigate manually in Figma and ensure Sparrow Bridge plugin is open",
+											"Ensure the Sparrow Bridge plugin is open in the target file",
 										],
 									},
 								),
@@ -1306,7 +1305,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		// Tool 7: Get Status (with setup validation)
 		this.server.tool(
 			"figma_get_status",
-			"Check connection status to Figma Desktop. Reports transport status and connection health via the Desktop Bridge plugin (WebSocket transport).",
+			"Check connection status to Figma Desktop. Reports transport status and connection health via the Sparrow Bridge plugin (WebSocket transport).",
 			{},
 			async () => {
 				try {
@@ -1342,7 +1341,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 								currentFileKey = fileInfo.result.fileKey;
 							}
 						} catch {
-							// Non-critical - Desktop Bridge might not be running yet
+							// Non-critical - Sparrow Bridge might not be running yet
 						}
 					}
 
@@ -1357,7 +1356,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										mode: "local",
 										currentFileName:
 											currentFileName ||
-											"(unable to retrieve - Desktop Bridge may need to be opened)",
+											"(unable to retrieve - Sparrow Bridge may need to be opened)",
 										currentFileKey: currentFileKey || undefined,
 										monitoredPageUrl: currentUrl,
 										monitorWorkerCount: monitorStatus?.workerCount ?? 0,
@@ -1423,7 +1422,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 												: this.wsStartupError?.code === "EADDRINUSE"
 													? `❌ All WebSocket ports ${this.wsPreferredPort}-${this.wsPreferredPort + 9} are in use`
 													: this.wsActualPort !== null && this.wsActualPort !== this.wsPreferredPort
-													? `❌ WebSocket server running on port ${this.wsActualPort} (fallback) but no plugin connected. Re-import the Desktop Bridge plugin in Figma to enable multi-port scanning.`
+													? `❌ WebSocket server running on port ${this.wsActualPort} (fallback) but no plugin connected. Re-import the Sparrow Bridge plugin in Figma to enable multi-port scanning.`
 													: "❌ No connection to Figma Desktop",
 											setupInstructions: !setupValid
 												? this.wsStartupError?.code === "EADDRINUSE"
@@ -1432,15 +1431,15 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 														fix: "Close some of the other Claude Desktop tabs or terminal sessions running the MCP server, then restart this one.",
 													}
 													: {
-														instructions: `Open the Desktop Bridge plugin in Figma (Plugins → Development → Figma Desktop Bridge). No special launch flags needed.${this.getPluginPath() ? ' Plugin manifest: ' + this.getPluginPath() : ''}`,
+														instructions: `Open the Sparrow Bridge plugin in Figma (Plugins → Development → Figma Sparrow Bridge). No special launch flags needed.${this.getPluginPath() ? ' Plugin manifest: ' + this.getPluginPath() : ''}`,
 													}
 												: undefined,
 											ai_instruction: !setupValid
 												? this.wsStartupError?.code === "EADDRINUSE"
-													? `All WebSocket ports in range ${this.wsPreferredPort}-${this.wsPreferredPort + 9} are in use — most likely multiple Claude Desktop tabs or terminal sessions are running the Figma Console MCP server. Ask the user to close some sessions and restart.`
+													? `All WebSocket ports in range ${this.wsPreferredPort}-${this.wsPreferredPort + 9} are in use — most likely multiple Claude Desktop tabs or terminal sessions are running the Figma Sparrow MCP server. Ask the user to close some sessions and restart.`
 													: this.wsActualPort !== null && this.wsActualPort !== this.wsPreferredPort
-														? `Server is running on fallback port ${this.wsActualPort} (port ${this.wsPreferredPort} was taken by another instance). The Desktop Bridge plugin is not connected — most likely because the plugin has old code that only scans port ${this.wsPreferredPort}. TELL THE USER: Re-import the Desktop Bridge plugin in Figma (Plugins → Development → Import plugin from manifest) to update it with multi-port scanning support. This is a one-time step.${this.getPluginPath() ? ' The manifest file is at: ' + this.getPluginPath() : ''}`
-														: `No connection to Figma Desktop. Open the Desktop Bridge plugin in Figma to connect.${this.getPluginPath() ? ' Plugin manifest: ' + this.getPluginPath() : ''}`
+														? `Server is running on fallback port ${this.wsActualPort} (port ${this.wsPreferredPort} was taken by another instance). The Sparrow Bridge plugin is not connected — most likely because the plugin has old code that only scans port ${this.wsPreferredPort}. TELL THE USER: Re-import the Sparrow Bridge plugin in Figma (Plugins → Development → Import plugin from manifest) to update it with multi-port scanning support. This is a one-time step.${this.getPluginPath() ? ' The manifest file is at: ' + this.getPluginPath() : ''}`
+														: `No connection to Figma Desktop. Open the Sparrow Bridge plugin in Figma to connect.${this.getPluginPath() ? ' Plugin manifest: ' + this.getPluginPath() : ''}`
 												: activeTransport === "websocket"
 													? `Connected via WebSocket Bridge to "${currentFileName || "unknown file"}" on port ${this.wsActualPort}. All design tools and console monitoring tools are available. Console logs are captured from the plugin sandbox (code.js). IMPORTANT: Always verify the file name before destructive operations when multiple files have the plugin open.`
 													: "All tools are ready to use.",
@@ -1519,7 +1518,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 					if (transport === "none") {
 						throw new Error(
 							"Cannot connect to Figma Desktop.\n\n" +
-							"Open the Desktop Bridge plugin in Figma (Plugins → Development → Figma Desktop Bridge)."
+							"Open the Sparrow Bridge plugin in Figma (Plugins → Development → Figma Sparrow Bridge)."
 						);
 					}
 
@@ -1548,7 +1547,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										currentUrl,
 										fileName:
 											fileName ||
-											"(unknown - Desktop Bridge may need to be restarted)",
+											"(unknown - Sparrow Bridge may need to be restarted)",
 										timestamp: Date.now(),
 										message: fileName
 											? `Successfully reconnected via ${transport.toUpperCase()}. Now connected to: "${fileName}"`
@@ -1569,7 +1568,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										error:
 											error instanceof Error ? error.message : String(error),
 										message: "Failed to reconnect to Figma Desktop",
-										hint: "Open the Desktop Bridge plugin in Figma",
+										hint: "Open the Sparrow Bridge plugin in Figma",
 									},
 								),
 							},
@@ -1587,7 +1586,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		// Tool: Get current user selection in Figma
 		this.server.tool(
 			"figma_get_selection",
-			"Get the currently selected nodes in Figma. Returns node IDs, names, types, and dimensions. WebSocket-only — requires Desktop Bridge plugin. Use this to understand what the user is pointing at instead of asking them to describe it.",
+			"Get the currently selected nodes in Figma. Returns node IDs, names, types, and dimensions. WebSocket-only — requires Sparrow Bridge plugin. Use this to understand what the user is pointing at instead of asking them to describe it.",
 			{
 				verbose: z
 					.boolean()
@@ -1604,7 +1603,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 							content: [{
 								type: "text",
 								text: JSON.stringify({
-									error: "WebSocket not connected. Open the Desktop Bridge plugin in Figma.",
+									error: "WebSocket not connected. Open the Sparrow Bridge plugin in Figma.",
 									selection: null,
 								}),
 							}],
@@ -1691,7 +1690,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		// Tool: Get recent design changes
 		this.server.tool(
 			"figma_get_design_changes",
-			"Get recent document changes detected in Figma. Returns buffered change events including which nodes changed, whether styles were modified, and change counts. WebSocket-only — events are captured via Desktop Bridge plugin. Use this to understand what changed since you last checked.",
+			"Get recent document changes detected in Figma. Returns buffered change events including which nodes changed, whether styles were modified, and change counts. WebSocket-only — events are captured via Sparrow Bridge plugin. Use this to understand what changed since you last checked.",
 			{
 				since: z
 					.number()
@@ -1714,7 +1713,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 							content: [{
 								type: "text",
 								text: JSON.stringify({
-									error: "WebSocket not connected. Open the Desktop Bridge plugin in Figma.",
+									error: "WebSocket not connected. Open the Sparrow Bridge plugin in Figma.",
 									changes: [],
 								}),
 							}],
@@ -1775,7 +1774,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		// Tool: List all open files connected via WebSocket
 		this.server.tool(
 			"figma_list_open_files",
-			"List all Figma files currently connected via the Desktop Bridge plugin. Shows which files have the plugin open and which one is the active target for tool calls. Use figma_navigate to switch between files. WebSocket multi-client mode — each file with the Desktop Bridge plugin maintains its own connection.",
+			"List all Figma files currently connected via the Sparrow Bridge plugin. Shows which files have the plugin open and which one is the active target for tool calls. Use figma_navigate to switch between files. WebSocket multi-client mode — each file with the Sparrow Bridge plugin maintains its own connection.",
 			{},
 			async () => {
 				try {
@@ -1791,7 +1790,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										text: JSON.stringify({
 											transport: "browser",
 											files: currentUrl ? [{ url: currentUrl, isActive: true }] : [],
-											message: "WebSocket not connected. Open the Desktop Bridge plugin for multi-file support.",
+											message: "WebSocket not connected. Open the Sparrow Bridge plugin for multi-file support.",
 										}),
 									}],
 								};
@@ -1804,7 +1803,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 							content: [{
 								type: "text",
 								text: JSON.stringify({
-									error: "No files connected. Open the Desktop Bridge plugin in Figma to connect files.",
+									error: "No files connected. Open the Sparrow Bridge plugin in Figma to connect files.",
 									files: [],
 								}),
 							}],
@@ -1874,7 +1873,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		// Tool: Execute arbitrary code in Figma plugin context (Power Tool)
 		this.server.tool(
 			"figma_execute",
-			`Execute arbitrary JavaScript in Figma's plugin context with full access to the figma API. Use for complex operations not covered by other tools. Requires Desktop Bridge plugin. CAUTION: Can modify your document.
+			`Execute arbitrary JavaScript in Figma's plugin context with full access to the figma API. Use for complex operations not covered by other tools. Requires Sparrow Bridge plugin. CAUTION: Can modify your document.
 
 **COMPONENT INSTANCES:** For instances (node.type === 'INSTANCE'), use figma_set_instance_properties — direct text editing FAILS SILENTLY. Check instance.componentProperties for available props (may have #nodeId suffixes).
 
@@ -1907,7 +1906,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_update_variable",
-				"Update a single variable's value. For multiple updates, use figma_batch_update_variables instead (10-50x faster). Use figma_get_variables first for IDs. COLOR: hex '#FF0000', FLOAT: number, STRING: text, BOOLEAN: true/false. Requires Desktop Bridge plugin.",
+				"Update a single variable's value. For multiple updates, use figma_batch_update_variables instead (10-50x faster). Use figma_get_variables first for IDs. COLOR: hex '#FF0000', FLOAT: number, STRING: text, BOOLEAN: true/false. Requires Sparrow Bridge plugin.",
 				{
 					variableId: z
 						.string()
@@ -1960,7 +1959,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to update variable",
-											hint: "Make sure the Desktop Bridge plugin is running and the variable ID is correct",
+											hint: "Make sure the Sparrow Bridge plugin is running and the variable ID is correct",
 										},
 									),
 								},
@@ -1976,7 +1975,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_create_variable",
-				"Create a single Figma variable. For multiple variables, use figma_batch_create_variables instead (10-50x faster). Use figma_get_variables first to get collection IDs. Supports COLOR, FLOAT, STRING, BOOLEAN. Requires Desktop Bridge plugin.",
+				"Create a single Figma variable. For multiple variables, use figma_batch_create_variables instead (10-50x faster). Use figma_get_variables first to get collection IDs. Supports COLOR, FLOAT, STRING, BOOLEAN. Requires Sparrow Bridge plugin.",
 				{
 					name: z
 						.string()
@@ -2045,7 +2044,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to create variable",
-											hint: "Make sure the Desktop Bridge plugin is running and the collection ID is correct",
+											hint: "Make sure the Sparrow Bridge plugin is running and the collection ID is correct",
 										},
 									),
 								},
@@ -2061,7 +2060,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_create_variable_collection",
-				"Create an empty variable collection. To create a collection WITH variables and modes in one step, use figma_setup_design_tokens instead. Requires Desktop Bridge plugin.",
+				"Create an empty variable collection. To create a collection WITH variables and modes in one step, use figma_setup_design_tokens instead. Requires Sparrow Bridge plugin.",
 				{
 					name: z
 						.string()
@@ -2113,7 +2112,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to create variable collection",
-											hint: "Make sure the Desktop Bridge plugin is running in Figma",
+											hint: "Make sure the Sparrow Bridge plugin is running in Figma",
 										},
 									),
 								},
@@ -2129,7 +2128,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 			"figma_delete_variable",
-			"Delete a Figma variable. WARNING: This is a destructive operation that cannot be undone (except with Figma's undo). Use figma_get_variables first to get variable IDs. Requires the Desktop Bridge plugin to be running.",
+			"Delete a Figma variable. WARNING: This is a destructive operation that cannot be undone (except with Figma's undo). Use figma_get_variables first to get variable IDs. Requires the Sparrow Bridge plugin to be running.",
 			{
 				variableId: z
 					.string()
@@ -2170,7 +2169,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										error:
 											error instanceof Error ? error.message : String(error),
 										message: "Failed to delete variable",
-										hint: "Make sure the Desktop Bridge plugin is running and the variable ID is correct",
+										hint: "Make sure the Sparrow Bridge plugin is running and the variable ID is correct",
 									},
 								),
 							},
@@ -2186,7 +2185,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_delete_variable_collection",
-				"Delete a Figma variable collection and ALL its variables. WARNING: This is a destructive operation that deletes all variables in the collection and cannot be undone (except with Figma's undo). Requires the Desktop Bridge plugin to be running.",
+				"Delete a Figma variable collection and ALL its variables. WARNING: This is a destructive operation that deletes all variables in the collection and cannot be undone (except with Figma's undo). Requires the Sparrow Bridge plugin to be running.",
 				{
 					collectionId: z
 						.string()
@@ -2227,7 +2226,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to delete variable collection",
-											hint: "Make sure the Desktop Bridge plugin is running and the collection ID is correct",
+											hint: "Make sure the Sparrow Bridge plugin is running and the collection ID is correct",
 										},
 									),
 								},
@@ -2243,7 +2242,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_rename_variable",
-				"Rename an existing Figma variable. This updates the variable's name while preserving all its values and settings. Requires the Desktop Bridge plugin to be running.",
+				"Rename an existing Figma variable. This updates the variable's name while preserving all its values and settings. Requires the Sparrow Bridge plugin to be running.",
 				{
 					variableId: z
 						.string()
@@ -2288,7 +2287,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to rename variable",
-											hint: "Make sure the Desktop Bridge plugin is running and the variable ID is correct",
+											hint: "Make sure the Sparrow Bridge plugin is running and the variable ID is correct",
 										},
 									),
 								},
@@ -2304,7 +2303,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_add_mode",
-				"Add a new mode to an existing Figma variable collection. Modes allow variables to have different values for different contexts (e.g., Light/Dark themes, device sizes). Requires the Desktop Bridge plugin to be running.",
+				"Add a new mode to an existing Figma variable collection. Modes allow variables to have different values for different contexts (e.g., Light/Dark themes, device sizes). Requires the Sparrow Bridge plugin to be running.",
 				{
 					collectionId: z
 						.string()
@@ -2349,7 +2348,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to add mode to collection",
-											hint: "Make sure the Desktop Bridge plugin is running, the collection ID is correct, and you haven't exceeded Figma's mode limit",
+											hint: "Make sure the Sparrow Bridge plugin is running, the collection ID is correct, and you haven't exceeded Figma's mode limit",
 										},
 									),
 								},
@@ -2365,7 +2364,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_rename_mode",
-				"Rename an existing mode in a Figma variable collection. Requires the Desktop Bridge plugin to be running.",
+				"Rename an existing mode in a Figma variable collection. Requires the Sparrow Bridge plugin to be running.",
 				{
 					collectionId: z
 						.string()
@@ -2419,7 +2418,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to rename mode",
-											hint: "Make sure the Desktop Bridge plugin is running, the collection ID and mode ID are correct",
+											hint: "Make sure the Sparrow Bridge plugin is running, the collection ID and mode ID are correct",
 										},
 									),
 								},
@@ -2442,7 +2441,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_batch_create_variables",
-				"Create multiple variables in one operation. Use instead of calling figma_create_variable repeatedly — up to 50x faster for bulk operations. Get collection IDs from figma_get_variables first. Requires Desktop Bridge plugin.",
+				"Create multiple variables in one operation. Use instead of calling figma_create_variable repeatedly — up to 50x faster for bulk operations. Get collection IDs from figma_get_variables first. Requires Sparrow Bridge plugin.",
 				{
 					collectionId: z
 						.string()
@@ -2536,7 +2535,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 												error: result.error,
 												message:
 													"Batch create failed during execution",
-												hint: "Check that the collection ID is valid and the Desktop Bridge plugin is running",
+												hint: "Check that the collection ID is valid and the Sparrow Bridge plugin is running",
 											},
 										),
 									},
@@ -2573,7 +2572,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 													? error.message
 													: String(error),
 											message: "Failed to batch create variables",
-											hint: "Make sure the Desktop Bridge plugin is running and the collection ID is correct",
+											hint: "Make sure the Sparrow Bridge plugin is running and the collection ID is correct",
 										},
 									),
 								},
@@ -2589,7 +2588,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_batch_update_variables",
-				"Update multiple variable values in one operation. Use instead of calling figma_update_variable repeatedly — up to 50x faster for bulk updates. Get variable/mode IDs from figma_get_variables first. Requires Desktop Bridge plugin.",
+				"Update multiple variable values in one operation. Use instead of calling figma_update_variable repeatedly — up to 50x faster for bulk updates. Get variable/mode IDs from figma_get_variables first. Requires Sparrow Bridge plugin.",
 				{
 					updates: z
 						.array(
@@ -2704,7 +2703,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 													? error.message
 													: String(error),
 											message: "Failed to batch update variables",
-											hint: "Make sure the Desktop Bridge plugin is running and variable/mode IDs are correct",
+											hint: "Make sure the Sparrow Bridge plugin is running and variable/mode IDs are correct",
 										},
 									),
 								},
@@ -2720,7 +2719,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		if (!this.config.readOnly) {
 			this.server.tool(
 				"figma_setup_design_tokens",
-				"Create a complete design token structure in one operation: collection, modes, and all variables. Ideal for importing CSS custom properties or design tokens into Figma. Requires Desktop Bridge plugin.",
+				"Create a complete design token structure in one operation: collection, modes, and all variables. Ideal for importing CSS custom properties or design tokens into Figma. Requires Sparrow Bridge plugin.",
 				{
 					collectionName: z
 						.string()
@@ -2839,7 +2838,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 												error: result.error,
 												message:
 													"Design token setup failed during execution",
-												hint: "Check the token definitions and ensure the Desktop Bridge plugin is running",
+												hint: "Check the token definitions and ensure the Sparrow Bridge plugin is running",
 											},
 										),
 									},
@@ -2876,7 +2875,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 													? error.message
 													: String(error),
 											message: "Failed to setup design tokens",
-											hint: "Make sure the Desktop Bridge plugin is running in Figma",
+											hint: "Make sure the Sparrow Bridge plugin is running in Figma",
 										},
 									),
 								},
@@ -3247,7 +3246,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 									{
 										error:
 											error instanceof Error ? error.message : String(error),
-										hint: "Make sure the Desktop Bridge plugin is running in Figma",
+										hint: "Make sure the Sparrow Bridge plugin is running in Figma",
 									},
 								),
 							},
@@ -3299,7 +3298,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 									text: JSON.stringify(
 										{
 											error:
-												"Could not load design system data. Make sure the Desktop Bridge plugin is running.",
+												"Could not load design system data. Make sure the Sparrow Bridge plugin is running.",
 										},
 									),
 								},
@@ -3401,7 +3400,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 									text: JSON.stringify(
 										{
 											error:
-												"Could not load design system data. Make sure the Desktop Bridge plugin is running.",
+												"Could not load design system data. Make sure the Sparrow Bridge plugin is running.",
 										},
 									),
 								},
@@ -3532,7 +3531,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 									text: JSON.stringify(
 										{
 											error:
-												"Could not load design system data. Make sure the Desktop Bridge plugin is running.",
+												"Could not load design system data. Make sure the Sparrow Bridge plugin is running.",
 										},
 									),
 								},
@@ -3720,7 +3719,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											error:
 												error instanceof Error ? error.message : String(error),
 											message: "Failed to instantiate component",
-											hint: "Make sure the component key is correct and the Desktop Bridge plugin is running",
+											hint: "Make sure the component key is correct and the Sparrow Bridge plugin is running",
 										},
 									),
 								},
@@ -5096,7 +5095,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 										{
 											error:
 												error instanceof Error ? error.message : String(error),
-											hint: "Make sure the Desktop Bridge plugin is running and a component set exists.",
+											hint: "Make sure the Sparrow Bridge plugin is running and a component set exists.",
 										},
 									),
 								},
@@ -5128,7 +5127,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 			() => this.getCurrentFileUrl(),
 			this.variablesCache,
 			undefined, // options
-			() => this.getDesktopConnector(), // Desktop Bridge for description fallback
+			() => this.getDesktopConnector(), // Sparrow Bridge for description fallback
 		);
 
 		// Register Comment tools
@@ -5145,7 +5144,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 				const url = fileUrl || this.getCurrentFileUrl();
 				if (!url) {
 					throw new Error(
-						"No Figma file URL available. Either pass a fileUrl, call figma_navigate, or ensure the Desktop Bridge plugin is connected.",
+						"No Figma file URL available. Either pass a fileUrl, call figma_navigate, or ensure the Sparrow Bridge plugin is connected.",
 					);
 				}
 
@@ -5186,11 +5185,11 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 					}
 				}
 
-				// Check cache first (works for both Desktop Bridge and REST API data)
+				// Check cache first (works for both Sparrow Bridge and REST API data)
 				const cacheEntry = this.variablesCache.get(fileKey);
 				if (cacheEntry && Date.now() - cacheEntry.timestamp < 5 * 60 * 1000) {
 					const cached = cacheEntry.data;
-					// Desktop Bridge caches arrays directly; REST API data needs formatVariables
+					// Sparrow Bridge caches arrays directly; REST API data needs formatVariables
 					if (Array.isArray(cached.variables)) {
 						return {
 							variables: cached.variables,
@@ -5206,7 +5205,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 					};
 				}
 
-				// Priority 1: Try Desktop Bridge via transport-agnostic connector
+				// Priority 1: Try Sparrow Bridge via transport-agnostic connector
 				try {
 					const connector = await this.getDesktopConnector();
 					const desktopResult =
@@ -5236,7 +5235,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 									? desktopErr.message
 									: String(desktopErr),
 						},
-						"Desktop Bridge failed for token browser, trying REST API",
+						"Sparrow Bridge failed for token browser, trying REST API",
 					);
 				}
 
@@ -5246,7 +5245,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 
 				if (localError) {
 					throw new Error(
-						`Could not fetch variables. Desktop Bridge unavailable and REST API returned: ${localError}`,
+						`Could not fetch variables. Sparrow Bridge unavailable and REST API returned: ${localError}`,
 					);
 				}
 
@@ -5270,7 +5269,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 					const url = fileUrl || this.getCurrentFileUrl();
 					if (!url) {
 						throw new Error(
-							"No Figma file URL available. Either pass a fileUrl, call figma_navigate, or ensure the Desktop Bridge plugin is connected.",
+							"No Figma file URL available. Either pass a fileUrl, call figma_navigate, or ensure the Sparrow Bridge plugin is connected.",
 						);
 					}
 
@@ -5290,7 +5289,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 					let restApiFailed = false;
 
 					// Fetch variables + collections
-					// Fallback chain: Cache → Desktop Bridge → REST API → Actionable error
+					// Fallback chain: Cache → Sparrow Bridge → REST API → Actionable error
 					let variables: any[] = [];
 					let collections: any[] = [];
 
@@ -5309,7 +5308,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 						variablesAvailable = variables.length > 0;
 					}
 
-					// 2. Try Desktop Bridge via transport-agnostic connector
+					// 2. Try Sparrow Bridge via transport-agnostic connector
 					if (variables.length === 0) {
 						desktopBridgeAttempted = true;
 						try {
@@ -5340,7 +5339,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 											? desktopErr.message
 											: String(desktopErr),
 								},
-								"Desktop Bridge failed for dashboard, trying REST API for variables",
+								"Sparrow Bridge failed for dashboard, trying REST API for variables",
 							);
 						}
 					}
@@ -5379,16 +5378,16 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 					if (!variablesAvailable) {
 						if (desktopBridgeFailed && restApiFailed) {
 							variableError =
-								"Desktop Bridge plugin not connected and REST API requires Enterprise plan. Please open the Desktop Bridge plugin in Figma to enable variable/token analysis.";
+								"Sparrow Bridge plugin not connected and REST API requires Enterprise plan. Please open the Sparrow Bridge plugin in Figma to enable variable/token analysis.";
 						} else if (desktopBridgeFailed) {
 							variableError =
-								"Desktop Bridge plugin not connected. Please open the Desktop Bridge plugin in Figma to enable variable/token analysis.";
+								"Sparrow Bridge plugin not connected. Please open the Sparrow Bridge plugin in Figma to enable variable/token analysis.";
 						} else if (restApiFailed) {
 							variableError =
-								"REST API requires Figma Enterprise plan. Connect the Desktop Bridge plugin in Figma for variable/token access.";
+								"REST API requires Figma Enterprise plan. Connect the Sparrow Bridge plugin in Figma for variable/token access.";
 						} else if (!desktopBridgeAttempted && !restApiAttempted) {
 							variableError =
-								"No variable fetch methods available. Connect the Desktop Bridge plugin in Figma.";
+								"No variable fetch methods available. Connect the Sparrow Bridge plugin in Figma.";
 						}
 					}
 
@@ -5500,7 +5499,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 		try {
 			logger.info(
 				{ config: this.config },
-				"Starting Figma Console MCP (Local Mode)",
+				"Starting Figma Sparrow MCP (Local Mode)",
 			);
 
 			// Start WebSocket bridge server with port range fallback.
@@ -5577,10 +5576,10 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 			if (this.wsServer) {
 				// Log when plugin files connect/disconnect (with file identity)
 				this.wsServer.on("fileConnected", (data: { fileKey: string; fileName: string }) => {
-					logger.info({ fileKey: data.fileKey, fileName: data.fileName }, "Desktop Bridge plugin connected via WebSocket");
+					logger.info({ fileKey: data.fileKey, fileName: data.fileName }, "Sparrow Bridge plugin connected via WebSocket");
 				});
 				this.wsServer.on("fileDisconnected", (data: { fileKey: string; fileName: string }) => {
-					logger.info({ fileKey: data.fileKey, fileName: data.fileName }, "Desktop Bridge plugin disconnected from WebSocket");
+					logger.info({ fileKey: data.fileKey, fileName: data.fileName }, "Sparrow Bridge plugin disconnected from WebSocket");
 				});
 
 				// Invalidate variable cache when document changes are reported.
@@ -5625,7 +5624,7 @@ If Design Systems Assistant MCP is not available, install it from: https://githu
 			logger.error({ error }, "Failed to start MCP server");
 
 			// Log helpful error message to stderr
-			console.error("\n❌ Failed to start Figma Console MCP:\n");
+			console.error("\n❌ Failed to start Figma Sparrow MCP:\n");
 			console.error(error instanceof Error ? error.message : String(error));
 			console.error("\n");
 
@@ -5688,8 +5687,6 @@ async function main() {
 // Run if executed directly
 // Note: On Windows, import.meta.url uses file:/// (3 slashes) while process.argv uses backslashes
 // We normalize both paths to compare correctly across platforms
-// realpathSync resolves symlinks (e.g. node_modules/.bin/figma-console-mcp -> dist/local.js)
-// which is required for npx to work, since npx runs the binary via a symlink
 const currentFile = fileURLToPath(import.meta.url);
 const entryFile = process.argv[1] ? realpathSync(resolve(process.argv[1])) : "";
 

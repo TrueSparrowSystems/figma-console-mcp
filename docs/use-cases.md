@@ -5,7 +5,7 @@ description: "Real-world scenarios for plugin debugging, design system extractio
 
 # Use Cases & Scenarios
 
-This guide shows real-world scenarios for using Figma Console MCP in your workflow.
+This guide shows real-world scenarios for using Figma Sparrow MCP in your workflow.
 
 ## 🐛 Plugin Development & Debugging
 
@@ -588,7 +588,7 @@ This workflow leverages the screenshot feedback loop for precise design control.
 
 **Workflow:**
 1. Use Figma Dev Mode MCP to generate component code
-2. Use Figma Console MCP to get design token values
+2. Use Figma Sparrow MCP to get design token values
 3. Replace hardcoded values with tokens
 4. Use Console MCP to debug when integrated
 

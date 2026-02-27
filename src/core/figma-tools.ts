@@ -2185,7 +2185,7 @@ export function registerFigmaAPITools(
 					`✗ Desktop Bridge (failed or not available)\n` +
 					`\nTo fix:\n` +
 					`1. If you have FIGMA_ACCESS_TOKEN: Check your token permissions\n` +
-					`2. Install and run the Figma Desktop Bridge plugin\n` +
+					`2. Install and run the Figma Sparrow Bridge plugin\n` +
 					`3. Alternative: Use parseFromConsole=true with console snippet workflow`
 				);
 			} catch (error) {
@@ -2297,7 +2297,7 @@ export function registerFigmaAPITools(
 	// Tool 10: Get Component Data
 	const componentDescription = isRemoteMode
 		? "Get component metadata or reconstruction specification. Two export formats: (1) 'metadata' (default) - comprehensive documentation with properties, variants, and design tokens for style guides and references, (2) 'reconstruction' - node tree specification compatible with Figma Component Reconstructor plugin for programmatic component creation."
-		: "Get component metadata or reconstruction specification. Two export formats: (1) 'metadata' (default) - comprehensive documentation with properties, variants, and design tokens for style guides and references, (2) 'reconstruction' - node tree specification compatible with Figma Component Reconstructor plugin for programmatic component creation. IMPORTANT: For local/unpublished components with metadata format, ensure the Figma Desktop Bridge plugin is running (Right-click in Figma → Plugins → Development → Figma Desktop Bridge) to get complete description data.";
+		: "Get component metadata or reconstruction specification. Two export formats: (1) 'metadata' (default) - comprehensive documentation with properties, variants, and design tokens for style guides and references, (2) 'reconstruction' - node tree specification compatible with Figma Component Reconstructor plugin for programmatic component creation. IMPORTANT: For local/unpublished components with metadata format, ensure the Figma Sparrow Bridge plugin is running (Right-click in Figma → Plugins → Development → Figma Sparrow Bridge) to get complete description data.";
 	server.tool(
 		"figma_get_component",
 		componentDescription,
@@ -2477,7 +2477,7 @@ export function registerFigmaAPITools(
 						`Desktop Bridge: ${getDesktopConnector || (getBrowserManager && ensureInitialized) ? 'Failed (see logs above)' : 'Not available (local mode only)'}\n` +
 						`REST API: ${errorMessage}\n\n` +
 						`To fix:\n` +
-						`1. Local mode: Set FIGMA_ACCESS_TOKEN environment variable, OR ensure Figma Desktop Bridge plugin is running\n` +
+						`1. Local mode: Set FIGMA_ACCESS_TOKEN environment variable, OR ensure Figma Sparrow Bridge plugin is running\n` +
 						`2. Cloud mode: Authenticate via OAuth\n` +
 						`3. Ensure the Desktop Bridge plugin is running in Figma Desktop`
 					);
@@ -2565,7 +2565,7 @@ export function registerFigmaAPITools(
 									source: "rest_api",
 									enriched: enrich || false,
 									warning: "Retrieved via REST API - description field may be missing due to known Figma API bug",
-									action_required: formatted.description || formatted.descriptionMarkdown ? null : "To get reliable component descriptions, run the Desktop Bridge plugin in Figma Desktop: Right-click → Plugins → Development → Figma Desktop Bridge, then try again."
+									action_required: formatted.description || formatted.descriptionMarkdown ? null : "To get reliable component descriptions, run the Desktop Bridge plugin in Figma Desktop: Right-click → Plugins → Development → Figma Sparrow Bridge, then try again."
 								}
 							),
 						},
@@ -3384,7 +3384,7 @@ export function registerFigmaAPITools(
 						throw new Error(
 							"Desktop Bridge not available. To capture screenshots:\n" +
 							"1. Open your Figma file in Figma Desktop\n" +
-							"2. Install and run the 'Figma Console MCP' plugin\n" +
+							"2. Install and run the 'Figma Sparrow MCP' plugin\n" +
 							"3. Ensure the plugin shows 'MCP ready' status"
 						);
 					}
@@ -3413,7 +3413,7 @@ export function registerFigmaAPITools(
 
 				if (!result) {
 					throw new Error(
-						"Desktop Bridge plugin not found. Ensure the 'Figma Console MCP' plugin is running in Figma Desktop."
+						"Desktop Bridge plugin not found. Ensure the 'Figma Sparrow MCP' plugin is running in Figma Desktop."
 					);
 				}
 
@@ -3512,7 +3512,7 @@ export function registerFigmaAPITools(
 							throw new Error(
 								"Desktop Bridge not available. To set instance properties:\n" +
 								"1. Open your Figma file in Figma Desktop\n" +
-								"2. Install and run the 'Figma Console MCP' plugin\n" +
+								"2. Install and run the 'Figma Sparrow MCP' plugin\n" +
 								"3. Ensure the plugin shows 'MCP ready' status"
 							);
 						}
@@ -3541,7 +3541,7 @@ export function registerFigmaAPITools(
 
 					if (!result) {
 						throw new Error(
-							"Desktop Bridge plugin not found. Ensure the 'Figma Console MCP' plugin is running in Figma Desktop."
+							"Desktop Bridge plugin not found. Ensure the 'Figma Sparrow MCP' plugin is running in Figma Desktop."
 						);
 					}
 

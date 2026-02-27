@@ -1,16 +1,16 @@
 {
-	"name": "figma-console-mcp",
+	"name": "figma-sparrow-mcp",
 	"version": "1.11.2",
 	"description": "MCP server for accessing Figma plugin console logs and screenshots via Cloudflare Workers or local mode",
 	"type": "module",
 	"main": "dist/local.js",
 	"types": "dist/local.d.ts",
 	"bin": {
-		"figma-console-mcp": "./dist/local.js"
+		"figma-sparrow-mcp": "./dist/local.js"
 	},
 	"files": [
 		"dist",
-		"figma-desktop-bridge",
+		"figma-sparrow-bridge",
 		"README.md",
 		"LICENSE"
 	],
@@ -49,7 +49,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/southleft/figma-console-mcp.git"
+		"url": "https://github.com/TrueSparrowSystems/figma-sparrow-mcp.git"
 	},
 	"engines": {
 		"node": ">=18.0.0"

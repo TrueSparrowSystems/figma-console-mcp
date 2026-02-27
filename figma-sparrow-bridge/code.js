@@ -1,4 +1,4 @@
-// Figma Desktop Bridge - MCP Plugin
+// Figma Sparrow Bridge - MCP Plugin
 // Bridges Figma API to MCP clients via plugin UI window
 // Supports: Variables, Components, Styles, and more
 // Uses postMessage to communicate with UI, bypassing worker sandbox limitations

@@ -1,13 +1,13 @@
 ---
 title: "Technical Architecture"
-description: "Deep dive into Figma Console MCP's architecture, deployment modes, component details, and data flows."
+description: "Deep dive into Figma Sparrow MCP's architecture, deployment modes, component details, and data flows."
 ---
 
-# Figma Console MCP - Technical Architecture
+# Figma Sparrow MCP - Technical Architecture
 
 ## Overview
 
-Figma Console MCP provides AI assistants with real-time access to Figma for debugging, design system extraction, and design creation. The server supports two deployment modes with different capabilities.
+Figma Sparrow MCP provides AI assistants with real-time access to Figma for debugging, design system extraction, and design creation. The server supports two deployment modes with different capabilities.
 
 ## Deployment Modes
 
@@ -318,12 +318,12 @@ npm run test:coverage
 ### Project Structure
 
 ```
-figma-console-mcp/
+figma-sparrow-mcp/
 ├── src/
 │   ├── local.ts          # Main MCP server (local mode)
 │   ├── index.ts          # Cloudflare Workers entry (remote mode)
 │   └── types/            # TypeScript definitions
-├── figma-desktop-bridge/
+├── figma-sparrow-bridge/
 │   ├── code.ts           # Plugin main code
 │   ├── ui.html           # Plugin UI
 │   └── manifest.json     # Plugin manifest

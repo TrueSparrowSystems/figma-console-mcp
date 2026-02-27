@@ -1,8 +1,8 @@
-# Figma Console MCP - Project Context
+# Figma Sparrow MCP - Project Context
 
 ## Project Overview
 
-**Name:** Figma Console MCP
+**Name:** Figma Sparrow MCP
 **Type:** Model Context Protocol (MCP) Server
 **Language:** TypeScript
 **Runtime:** Node.js >= 18

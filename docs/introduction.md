@@ -1,9 +1,9 @@
 ---
-title: "What is Figma Console MCP?"
-description: "A beginner's guide to understanding MCP, Figma Console MCP, and how AI assistants can transform your design workflow."
+title: "What is Figma Sparrow MCP?"
+description: "A beginner's guide to understanding MCP, Figma Sparrow MCP, and how AI assistants can transform your design workflow."
 ---
 
-# Understanding Figma Console MCP
+# Understanding Figma Sparrow MCP
 
 New to AI-powered design tools? This guide explains everything you need to know—no technical background required.
 
@@ -22,9 +22,9 @@ Without MCP, AI assistants are limited to what they already know. With MCP, they
 
 ---
 
-## What is Figma Console MCP?
+## What is Figma Sparrow MCP?
 
-**Figma Console MCP** is a specific MCP server that connects AI assistants to Figma. It transforms your design system from static files into a queryable API.
+**Figma Sparrow MCP** is a specific MCP server that connects AI assistants to Figma. It transforms your design system from static files into a queryable API.
 
 ### What it enables:
 
@@ -80,7 +80,7 @@ Every time a developer opens Figma, eyeballs the padding, and writes `margin: 16
 
 **What if your design system was queryable?**
 
-Figma Console MCP makes this real. Your design system becomes:
+Figma Sparrow MCP makes this real. Your design system becomes:
 
 - **Programmable** — Tokens export to CSS, Tailwind, or Sass automatically
 - **Queryable** — AI can look up any value, any component, any style
@@ -99,7 +99,7 @@ Figma Console MCP makes this real. Your design system becomes:
 
     Your design system is a product. Developers are your users. Give them an API.
 
-    **With Figma Console MCP, you can:**
+    **With Figma Sparrow MCP, you can:**
     - Export design tokens in any format (CSS, Tailwind, Sass, JSON)
     - Generate documentation automatically
     - Let developers query component specs directly
@@ -115,7 +115,7 @@ Figma Console MCP makes this real. Your design system becomes:
 
     Stop treating Figma as a screenshot machine.
 
-    **With Figma Console MCP, you can:**
+    **With Figma Sparrow MCP, you can:**
     - Get exact token values without opening Figma
     - Implement components with accurate specs
     - Auto-generate token files from source
@@ -131,7 +131,7 @@ Figma Console MCP makes this real. Your design system becomes:
 
     Real-time console access, right in your AI chat.
 
-    **With Figma Console MCP, you can:**
+    **With Figma Sparrow MCP, you can:**
     - Stream console logs in real-time
     - Capture errors with full stack traces
     - Take screenshots of plugin UI state
@@ -147,7 +147,7 @@ Figma Console MCP makes this real. Your design system becomes:
 
     Scale your design system management with AI assistance.
 
-    **With Figma Console MCP, you can:**
+    **With Figma Sparrow MCP, you can:**
     - Audit token usage across components
     - Batch create variables for new themes
     - Document components automatically
@@ -164,51 +164,8 @@ Figma Console MCP makes this real. Your design system becomes:
 
 ## How Do I Get Started?
 
-**First, decide what you want to do:**
-
-| I want to... | Setup | Time |
-|--------------|-------|------|
-| **Create and modify designs with AI** | NPX Setup (Recommended) | ~10 min |
-| **Just explore my design data** (read-only) | Remote SSE | ~2 min |
-
-### Recommended: NPX Setup (Full Capabilities)
-
-Get all 56+ tools including design creation, variable management, and component instantiation.
-
-<Steps>
-  <Step title="Get a Figma Token">
-    Visit [Figma Help](https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens) and create a Personal Access Token
-  </Step>
-  <Step title="Configure Your MCP Client">
-    Add the server config with your token to Claude Code, Cursor, Windsurf, Claude Desktop, or any MCP client
-  </Step>
-  <Step title="Connect to Figma Desktop">
-    Install the Desktop Bridge Plugin — one-time import, no debug flags needed. Run it in your Figma file to connect.
-  </Step>
-  <Step title="Restart Your MCP Client">
-    Restart your MCP client to load the new config
-  </Step>
-</Steps>
-
-### Quick Start: Remote SSE (Read-Only)
-
-If you just want to explore or evaluate the tool, use Remote SSE. It's read-only (21 tools) but requires zero setup.
-
-<Steps>
-  <Step title="Open Claude Desktop Settings">
-    Claude menu → Settings → Connectors
-  </Step>
-  <Step title="Add Custom Connector">
-    Name: `Figma Console (Read-Only)` / URL: `https://figma-console-mcp.southleft.com/sse`
-  </Step>
-</Steps>
-
-<Warning>
-**Remote mode cannot create or modify designs.** It only has 21 read-only tools (~34% of full capabilities). For design creation, use NPX Setup.
-</Warning>
-
 <Card title="Full Setup Guide" icon="book-open" href="/setup">
-  Detailed step-by-step instructions for all setup methods and AI clients.
+  Detailed step-by-step instructions for setting up Figma Sparrow MCP with your AI client.
 </Card>
 
 ---
@@ -263,29 +220,6 @@ Build a user profile card using the Avatar and Button components
 
 ---
 
-## Remote vs Local Mode
-
-Figma Console MCP offers two ways to connect with **very different capabilities**:
-
-| Feature | Local Mode (NPX/Git) | Remote Mode (SSE) |
-|---------|----------------------|-------------------|
-| **Total tools** | **56+** | **21** (read-only) |
-| **Setup** | ~10 minutes | ~2 minutes |
-| **Create designs** | ✅ Full capability | ❌ Not available |
-| **Edit designs** | ✅ Full capability | ❌ Not available |
-| **Manage variables** | ✅ Full capability | ❌ Not available |
-| **Read design data** | ✅ | ✅ |
-| **Variables API** | Works with any plan | Enterprise required |
-| **Authentication** | Manual token (one-time) | Automatic OAuth |
-
-**Start with NPX Setup** if you want AI to actually design in Figma. Remote mode is useful for quick exploration but is **read-only** with only ~34% of the tools.
-
-<Card title="Compare Modes in Detail" icon="code-compare" href="/mode-comparison">
-  Understand the technical differences and choose the right setup.
-</Card>
-
----
-
 ## Frequently Asked Questions
 
 <AccordionGroup>
@@ -294,19 +228,19 @@ Figma Console MCP offers two ways to connect with **very different capabilities*
   </Accordion>
 
   <Accordion title="Is my Figma data secure?">
-    Yes. Remote mode uses OAuth (the same secure login as "Sign in with Google"). Your credentials are never shared with the MCP server—only temporary access tokens. Local mode keeps everything on your machine.
+    Yes. Your Figma personal access token stays on your machine and is used to authenticate directly with Figma's API. The MCP server runs locally and never sends your credentials anywhere.
   </Accordion>
 
   <Accordion title="Does this replace Figma's official Dev Mode MCP?">
-    No—they're complementary! Figma's official MCP generates code from designs. Figma Console MCP extracts raw data, debugs plugins, and creates designs. Use both for the complete workflow.
+    No—they're complementary! Figma's official MCP generates code from designs. Figma Sparrow MCP extracts raw data, debugs plugins, and creates designs. Use both for the complete workflow.
   </Accordion>
 
   <Accordion title="What AI assistants work with this?">
-    Any MCP-compatible client: Claude Desktop, Claude Code, GitHub Copilot (VS Code 1.102+), Cursor, Windsurf, Zed, and others. If your AI tool supports MCP servers, it works with Figma Console MCP.
+    Any MCP-compatible client: Claude Desktop, Claude Code, GitHub Copilot (VS Code 1.102+), Cursor, Windsurf, Zed, and others. If your AI tool supports MCP servers, it works with Figma Sparrow MCP.
   </Accordion>
 
   <Accordion title="Is this free?">
-    Yes! Figma Console MCP is open-source (MIT license). The hosted remote server is free to use. You can also self-host if you prefer.
+    Yes! Figma Sparrow MCP is open-source (MIT license). The hosted remote server is free to use. You can also self-host if you prefer.
   </Accordion>
 </AccordionGroup>
 
@@ -329,5 +263,5 @@ Figma Console MCP offers two ways to connect with **very different capabilities*
 ---
 
 <Note>
-**Open Source** — Figma Console MCP is MIT licensed. Contribute, customize, or self-host for enterprise requirements on [GitHub](https://github.com/southleft/figma-console-mcp).
+**Open Source** — Figma Sparrow MCP is MIT licensed. Contribute, customize, or self-host for enterprise requirements on [GitHub](https://github.com/TrueSparrowSystems/figma-sparrow-mcp).
 </Note>

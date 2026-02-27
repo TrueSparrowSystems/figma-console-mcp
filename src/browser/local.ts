@@ -68,7 +68,7 @@ export class LocalBrowserManager implements IBrowserManager {
 			throw new Error(
 				`Failed to connect to Figma Desktop.\n\n` +
 				`Please open the Desktop Bridge plugin in Figma:\n` +
-				`  Plugins → Development → Figma Desktop Bridge\n\n` +
+				`  Plugins → Development → Figma Sparrow Bridge\n\n` +
 				`Error: ${error instanceof Error ? error.message : String(error)}`
 			);
 		}

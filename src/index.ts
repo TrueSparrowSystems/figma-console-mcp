@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Figma Console MCP Server
+ * Figma Sparrow MCP Server
  * Entry point for the MCP server that enables AI assistants to access
  * Figma plugin console logs and screenshots.
  *
@@ -27,12 +27,12 @@ import { registerCommentTools } from "./core/comment-tools.js";
 const logger = createChildLogger({ component: "mcp-server" });
 
 /**
- * Figma Console MCP Agent
+ * Figma Sparrow MCP Agent
  * Extends McpAgent to provide Figma-specific debugging tools
  */
 export class FigmaConsoleMCPv3 extends McpAgent {
 	server = new McpServer({
-		name: "Figma Console MCP",
+		name: "Figma Sparrow MCP",
 		version: "1.8.0",
 	});
 
@@ -1329,7 +1329,7 @@ export default {
 					JSON.stringify({
 						error: "OAuth not configured",
 						message: "Server administrator needs to configure FIGMA_OAUTH_CLIENT_ID",
-						docs: "https://github.com/southleft/figma-console-mcp#oauth-setup"
+						docs: "https://github.com/TrueSparrowSystems/figma-sparrow-mcp#oauth-setup"
 					}),
 					{
 						status: 500,
@@ -1613,7 +1613,7 @@ export default {
 	<div class="container">
 		<div class="icon">✓</div>
 		<h1>Authentication successful</h1>
-		<p>You've successfully connected Figma Console MCP to your Figma account. You can now close this window and return to Claude.</p>
+		<p>You've successfully connected Figma Sparrow MCP to your Figma account. You can now close this window and return to Claude.</p>
 		<button class="button" onclick="window.close()">Close this window</button>
 		<div class="footer">This window will automatically close in 5 seconds</div>
 	</div>
@@ -1649,7 +1649,7 @@ export default {
 			return new Response(
 				JSON.stringify({
 					status: "healthy",
-					service: "Figma Console MCP",
+					service: "Figma Sparrow MCP",
 					version: "1.8.0",
 					endpoints: {
 						mcp: ["/sse", "/mcp"],
@@ -1704,14 +1704,14 @@ export default {
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Figma Console MCP - The Most Comprehensive MCP Server for Figma</title>
+	<title>Figma Sparrow MCP - The Most Comprehensive MCP Server for Figma</title>
 	<link rel="icon" type="image/svg+xml" href="https://docs.figma-console-mcp.southleft.com/favicon.svg">
 	<meta name="description" content="Turn your Figma design system into a living API. 56+ tools give AI assistants deep access to design tokens, component specs, variables, and programmatic design creation.">
 
 	<!-- Open Graph -->
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="https://figma-console-mcp.southleft.com">
-	<meta property="og:title" content="Figma Console MCP - Turn Your Design System Into a Living API">
+	<meta property="og:title" content="Figma Sparrow MCP - Turn Your Design System Into a Living API">
 	<meta property="og:description" content="The most comprehensive MCP server for Figma. 56+ tools give AI assistants deep access to design tokens, components, variables, and programmatic design creation.">
 	<meta property="og:image" content="https://docs.figma-console-mcp.southleft.com/images/og-image.jpg">
 	<meta property="og:image:width" content="1200">
@@ -1719,7 +1719,7 @@ export default {
 
 	<!-- Twitter -->
 	<meta name="twitter:card" content="summary_large_image">
-	<meta name="twitter:title" content="Figma Console MCP - Turn Your Design System Into a Living API">
+	<meta name="twitter:title" content="Figma Sparrow MCP - Turn Your Design System Into a Living API">
 	<meta name="twitter:description" content="The most comprehensive MCP server for Figma. 56+ tools give AI assistants deep access to design tokens, components, variables, and programmatic design creation.">
 	<meta name="twitter:image" content="https://docs.figma-console-mcp.southleft.com/images/og-image.jpg">
 
@@ -2531,13 +2531,13 @@ export default {
 <body>
 	<header class="header">
 		<a href="/" class="logo">
-			<img src="https://docs.figma-console-mcp.southleft.com/logo/light.svg" alt="Figma Console MCP" class="logo-dark">
-			<img src="https://docs.figma-console-mcp.southleft.com/logo/dark.svg" alt="Figma Console MCP" class="logo-light" style="display: none;">
+			<img src="https://docs.figma-console-mcp.southleft.com/logo/light.svg" alt="Figma Sparrow MCP" class="logo-dark">
+			<img src="https://docs.figma-console-mcp.southleft.com/logo/dark.svg" alt="Figma Sparrow MCP" class="logo-light" style="display: none;">
 		</a>
 		<div class="header-right">
 			<nav class="nav">
 				<a href="https://docs.figma-console-mcp.southleft.com">Documentation</a>
-				<a href="https://github.com/southleft/figma-console-mcp">GitHub</a>
+				<a href="https://github.com/TrueSparrowSystems/figma-sparrow-mcp">GitHub</a>
 				<a href="https://www.npmjs.com/package/figma-console-mcp">npm</a>
 				<a href="https://southleft.com/insights/ai/figma-console-mcp-ai-powered-design-system-management/">Blog</a>
 			</nav>
@@ -2555,8 +2555,8 @@ export default {
 	<div class="mobile-menu" id="mobileMenu">
 		<div class="mobile-menu-header">
 			<a href="/" class="logo">
-				<img src="https://docs.figma-console-mcp.southleft.com/logo/light.svg" alt="Figma Console MCP" class="logo-dark">
-				<img src="https://docs.figma-console-mcp.southleft.com/logo/dark.svg" alt="Figma Console MCP" class="logo-light" style="display: none;">
+				<img src="https://docs.figma-console-mcp.southleft.com/logo/light.svg" alt="Figma Sparrow MCP" class="logo-dark">
+				<img src="https://docs.figma-console-mcp.southleft.com/logo/dark.svg" alt="Figma Sparrow MCP" class="logo-light" style="display: none;">
 			</a>
 			<button class="mobile-menu-close" aria-label="Close menu">
 				<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
@@ -2564,7 +2564,7 @@ export default {
 		</div>
 		<nav class="mobile-menu-nav">
 			<a href="https://docs.figma-console-mcp.southleft.com">Documentation</a>
-			<a href="https://github.com/southleft/figma-console-mcp">GitHub</a>
+			<a href="https://github.com/TrueSparrowSystems/figma-sparrow-mcp">GitHub</a>
 			<a href="https://www.npmjs.com/package/figma-console-mcp">npm</a>
 			<a href="https://southleft.com/insights/ai/figma-console-mcp-ai-powered-design-system-management/">Blog</a>
 		</nav>
@@ -2582,7 +2582,7 @@ export default {
 						Read the Docs
 						<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
 					</a>
-					<a href="https://github.com/southleft/figma-console-mcp" class="btn btn-secondary">
+					<a href="https://github.com/TrueSparrowSystems/figma-sparrow-mcp" class="btn btn-secondary">
 						<svg fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
 						View on GitHub
 					</a>
@@ -2798,7 +2798,7 @@ export default {
 					</div>
 					<div class="blog-text">
 						<h4>Read the announcement</h4>
-						<p>AI-Powered Design System Management with Figma Console MCP</p>
+						<p>AI-Powered Design System Management with Figma Sparrow MCP</p>
 					</div>
 				</div>
 				<span class="blog-link">
@@ -2813,7 +2813,7 @@ export default {
 		<p>MIT License. Built by <a href="https://southleft.com">Southleft</a></p>
 		<div class="footer-links">
 			<a href="https://docs.figma-console-mcp.southleft.com">Docs</a>
-			<a href="https://github.com/southleft/figma-console-mcp">GitHub</a>
+			<a href="https://github.com/TrueSparrowSystems/figma-sparrow-mcp">GitHub</a>
 			<a href="https://www.npmjs.com/package/figma-console-mcp">npm</a>
 		</div>
 	</footer>

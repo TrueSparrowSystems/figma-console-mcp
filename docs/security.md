@@ -3,7 +3,7 @@ title: Security & Privacy
 description: Security architecture, data handling, and compliance information
 ---
 
-Figma Console MCP is designed with security as a priority. The project is **fully open source** (MIT licensed), allowing complete code auditing by security teams.
+Figma Sparrow MCP is designed with security as a priority. The project is **fully open source** (MIT licensed), allowing complete code auditing by security teams.
 
 ## Architecture Security
 
@@ -35,7 +35,7 @@ Figma Console MCP is designed with security as a priority. The project is **full
 
 ## Authentication
 
-Figma Console MCP uses **Figma's native authentication**:
+Figma Sparrow MCP uses **Figma's native authentication**:
 
 <AccordionGroup>
   <Accordion title="Personal Access Tokens (PATs)" icon="key">
@@ -132,7 +132,7 @@ All network communication is limited to:
     Only `api.figma.com` needs network access
   </Step>
   <Step title="Audit Source Code">
-    Complete source available on [GitHub](https://github.com/southleft/figma-console-mcp)
+    Complete source available on [GitHub](https://github.com/TrueSparrowSystems/figma-sparrow-mcp)
   </Step>
 </Steps>
 
@@ -140,7 +140,7 @@ All network communication is limited to:
 
 To report a security vulnerability:
 
-1. Open a [private security advisory](https://github.com/southleft/figma-console-mcp/security/advisories/new) on GitHub
+1. Open a [private security advisory](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/security/advisories/new) on GitHub
 2. Include steps to reproduce and potential impact
 3. We aim to respond within 48 hours
 
@@ -163,4 +163,4 @@ Please use GitHub's private security advisory feature rather than public issues.
 
 ## Questions?
 
-For security inquiries, open a [GitHub Discussion](https://github.com/southleft/figma-console-mcp/discussions) or use the [private security advisory](https://github.com/southleft/figma-console-mcp/security/advisories/new) feature for sensitive matters.
+For security inquiries, open a [GitHub Discussion](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/discussions) or use the [private security advisory](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/security/advisories/new) feature for sensitive matters.

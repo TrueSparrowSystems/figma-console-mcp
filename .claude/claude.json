@@ -1,5 +1,5 @@
 {
-  "name": "figma-console-mcp",
+  "name": "figma-sparrow-mcp",
   "description": "MCP server for accessing Figma plugin console logs, screenshots, and design system manipulation",
   "projectType": "mcp-server",
   "language": "typescript",

@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "figma-console-mcp",
+	"name": "figma-sparrow-mcp",
 	"account_id": "4718d49e576512c578ff94c6b1ba7d3f",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-03-10",
@@ -18,7 +18,7 @@
 			"renamed_classes": [
 				{
 					"from": "MyMCP",
-					"to": "FigmaConsoleMCP"
+					"to": "FigmaSparrowMCP"
 				}
 			],
 			"tag": "v2"
@@ -26,8 +26,8 @@
 		{
 			"renamed_classes": [
 				{
-					"from": "FigmaConsoleMCP",
-					"to": "FigmaConsoleMCPv3"
+					"from": "FigmaSparrowMCP",
+					"to": "FigmaSparrowMCPv3"
 				}
 			],
 			"tag": "v3"
@@ -36,7 +36,7 @@
 	"durable_objects": {
 		"bindings": [
 			{
-				"class_name": "FigmaConsoleMCPv3",
+				"class_name": "FigmaSparrowMCPv3",
 				"name": "MCP_OBJECT"
 			}
 		]
