@@ -1,5 +1,5 @@
 /**
- * Type definitions for Figma Console MCP
+ * Type definitions for Figma Sparrow MCP
  */
 
 /**

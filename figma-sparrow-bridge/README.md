@@ -1,4 +1,4 @@
-# Figma Desktop Bridge
+# Figma Sparrow Bridge
 
 A Figma plugin that bridges the Variables API and Component descriptions to MCP (Model Context Protocol) clients without requiring an Enterprise plan.
 
@@ -35,18 +35,18 @@ As of v1.10.0, the server supports multi-instance operation — if port 9223 is 
 
 1. **Open Figma Desktop**
 2. **Go to Plugins → Development → Import plugin from manifest...**
-3. **Navigate to:** `/path/to/figma-console-mcp/figma-desktop-bridge/manifest.json`
+3. **Navigate to:** `/path/to/figma-sparrow-mcp/figma-sparrow-bridge/manifest.json`
 4. **Click "Open"**
 
-The plugin will appear in your Development plugins list as "Figma Desktop Bridge".
+The plugin will appear in your Development plugins list as "Figma Sparrow Bridge".
 
 ### Manual Installation
 
 Alternatively, you can install from the plugin directory:
 
 ```bash
-# From the figma-console-mcp directory
-cd figma-desktop-bridge
+# From the figma-sparrow-mcp directory
+cd figma-sparrow-bridge
 
 # Figma will use these files:
 # - manifest.json (plugin configuration)
@@ -59,8 +59,8 @@ cd figma-desktop-bridge
 ### Running the Plugin
 
 1. **Open your Figma file** with variables and/or components
-2. **Run the plugin:** Right-click → Plugins → Development → Figma Desktop Bridge
-3. **Wait for confirmation:** Plugin UI will show "✓ Desktop Bridge active"
+2. **Run the plugin:** Right-click → Plugins → Development → Figma Sparrow Bridge
+3. **Wait for confirmation:** Plugin UI will show "✓ Sparrow Bridge active"
 
 The plugin will:
 - Fetch all local variables and collections on startup
@@ -139,7 +139,7 @@ figma_get_component({
 - Try **Plugins → Development → Refresh plugin list**
 
 ### "No plugin UI found with variables data" or "No plugin UI found with requestComponentData"
-- Ensure plugin is running (check for open plugin window showing "✓ Desktop Bridge active")
+- Ensure plugin is running (check for open plugin window showing "✓ Sparrow Bridge active")
 - Try closing and reopening the plugin
 - Check browser console for errors (Plugins → Development → Open Console)
 
@@ -150,12 +150,12 @@ figma_get_component({
 
 ### Component descriptions are empty or missing
 - **First, verify in Figma:** Check if the component actually has a description set
-- If using REST API fallback (not Desktop Bridge), descriptions may be missing due to known Figma API bug
+- If using REST API fallback (not Sparrow Bridge), descriptions may be missing due to known Figma API bug
 - Ensure the plugin is running - component data requires active plugin connection
 - Check that the nodeId is correct (format: "123:456")
 
 ### Component request times out
-- Ensure plugin is running and shows "Desktop Bridge active"
+- Ensure plugin is running and shows "Sparrow Bridge active"
 - Check that the component exists in the current file
 - Verify nodeId format is correct
 - Timeout is set to 10 seconds - complex files may take longer
@@ -175,7 +175,7 @@ figma_get_component({
 
 ## Multi-Instance Support (v1.10.0)
 
-The Desktop Bridge plugin supports connecting to **multiple MCP server instances** simultaneously. This is useful when:
+The Sparrow Bridge plugin supports connecting to **multiple MCP server instances** simultaneously. This is useful when:
 
 - **Claude Desktop** runs both Chat and Code tabs (each spawns a separate MCP server)
 - **Multiple CLI terminals** are running different projects with the MCP
@@ -190,10 +190,10 @@ The Desktop Bridge plugin supports connecting to **multiple MCP server instances
 
 ### Important: One-Time Plugin Update
 
-If you imported the Desktop Bridge plugin **before v1.10.0**, you need to re-import the manifest once to enable multi-port scanning:
+If you imported the Sparrow Bridge plugin **before v1.10.0**, you need to re-import the manifest once to enable multi-port scanning:
 
 1. In Figma: **Plugins → Development → Import plugin from manifest...**
-2. Select the `manifest.json` file from the `figma-desktop-bridge` directory
+2. Select the `manifest.json` file from the `figma-sparrow-bridge` directory
 3. Run the plugin — it will now scan all ports and connect to all servers
 
 > **Why?** Figma caches plugin files at the application level. Simply restarting the plugin does NOT reload the code from disk. You must re-import the manifest to force Figma to pick up the new multi-port scanning logic.
@@ -204,7 +204,7 @@ Without re-importing, the old plugin code only connects to port 9223. If your se
 
 ### File Structure
 ```
-figma-desktop-bridge/
+figma-sparrow-bridge/
 ├── manifest.json    # Plugin configuration
 ├── code.js          # Plugin worker (accesses Figma API)
 ├── ui.html          # Plugin UI (stores/requests data for MCP access)
@@ -217,23 +217,23 @@ The plugin logs to Figma's console:
 
 **Variables (startup):**
 ```
-🌉 [Desktop Bridge] Plugin loaded and ready
-🌉 [Desktop Bridge] Fetching variables...
-🌉 [Desktop Bridge] Found 404 variables in 2 collections
-🌉 [Desktop Bridge] Variables data sent to UI successfully
-🌉 [Desktop Bridge] UI iframe now has variables data accessible via window.__figmaVariablesData
+🌉 [Sparrow Bridge] Plugin loaded and ready
+🌉 [Sparrow Bridge] Fetching variables...
+🌉 [Sparrow Bridge] Found 404 variables in 2 collections
+🌉 [Sparrow Bridge] Variables data sent to UI successfully
+🌉 [Sparrow Bridge] UI iframe now has variables data accessible via window.__figmaVariablesData
 ```
 
 **Components (on-demand):**
 ```
-🌉 [Desktop Bridge] Fetching component: 279:2861
-🌉 [Desktop Bridge] Component data ready. Has description: true
+🌉 [Sparrow Bridge] Fetching component: 279:2861
+🌉 [Sparrow Bridge] Component data ready. Has description: true
 ```
 
 **Ready state:**
 ```
-🌉 [Desktop Bridge] Ready to handle component requests
-🌉 [Desktop Bridge] Plugin will stay open until manually closed
+🌉 [Sparrow Bridge] Ready to handle component requests
+🌉 [Sparrow Bridge] Plugin will stay open until manually closed
 ```
 
 View logs: **Plugins → Development → Open Console** (Cmd+Option+I on Mac)
@@ -246,7 +246,7 @@ View logs: **Plugins → Development → Open Console** (Cmd+Option+I on Mac)
 - Component requests are scoped to current file only
 - WebSocket bridge is local-only and unauthenticated — it relies on `localhost` binding for security. Multiple clients may be connected concurrently (one per Figma file). Do not expose the WebSocket port outside `localhost` (e.g., via port forwarding) on untrusted machines
 
-## Why Desktop Bridge for Components?
+## Why Sparrow Bridge for Components?
 
 Figma's REST API has a known bug where component `description` and `descriptionMarkdown` fields are often missing or outdated. This is particularly problematic for:
 
@@ -254,8 +254,8 @@ Figma's REST API has a known bug where component `description` and `descriptionM
 - **Unpublished components** in active development
 - **Team collaboration** where descriptions contain important usage guidelines
 
-The Desktop Bridge plugin bypasses this limitation by using the Figma Plugin API (`figma.getNodeByIdAsync()`), which has reliable, real-time access to all component fields including descriptions. This makes it ideal for teams working with local components in shared project files.
+The Sparrow Bridge plugin bypasses this limitation by using the Figma Plugin API (`figma.getNodeByIdAsync()`), which has reliable, real-time access to all component fields including descriptions. This makes it ideal for teams working with local components in shared project files.
 
 ## License
 
-Part of the figma-console-mcp project.
+Part of the figma-sparrow-mcp project.

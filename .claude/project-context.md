@@ -1,8 +1,8 @@
-# Figma Console MCP - Project Context
+# Figma Sparrow MCP - Project Context
 
 ## Project Overview
 
-**Name:** Figma Console MCP
+**Name:** Figma Sparrow MCP
 **Type:** Model Context Protocol (MCP) Server
 **Language:** TypeScript
 **Runtime:** Node.js >= 18
@@ -18,23 +18,19 @@ Enable AI coding assistants (Claude Code, Cursor, etc.) to interact with Figma i
 
 - **@modelcontextprotocol/sdk** - MCP protocol implementation
 - **Puppeteer / Chrome DevTools Protocol** - Browser automation for console capture
-- **Figma Plugin API** - Design manipulation via Desktop Bridge
+- **Figma Plugin API** - Design manipulation via Sparrow Bridge
 - **TypeScript** - Type-safe development
 - **Biome** - Formatting and linting
 - **Jest** - Testing framework
 
 ## Architecture
 
-Two deployment modes:
+Deployment mode:
 
-### Local Mode (Desktop Bridge)
+### Local Mode (Sparrow Bridge)
 - Connects to Figma Desktop via plugin
 - Full read/write capabilities
 - Execute arbitrary Figma Plugin API code via `figma_execute`
-
-### Cloudflare Mode
-- REST API for read-only operations
-- Scalable cloud deployment
 
 ## Core Tool Categories
 
@@ -50,7 +46,7 @@ Two deployment modes:
 - `figma_get_component` - Component definitions
 - `figma_get_styles` - Color, text, effect styles
 
-### Design Manipulation (Desktop Bridge)
+### Design Manipulation (Sparrow Bridge)
 - `figma_execute` - Run arbitrary Plugin API code
 - `figma_create_child` - Add nodes to frames
 - `figma_set_fills` / `figma_set_strokes` - Modify appearance

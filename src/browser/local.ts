@@ -1,7 +1,7 @@
 /**
  * Local Browser Manager (Legacy)
  * Note: This module is maintained for backwards compatibility but is no longer
- * the primary connection method. Use the WebSocket Desktop Bridge plugin instead.
+ * the primary connection method. Use the WebSocket Sparrow Bridge Plugin instead.
  */
 
 import puppeteer, { type Browser, type Page } from 'puppeteer-core';
@@ -67,8 +67,8 @@ export class LocalBrowserManager implements IBrowserManager {
 
 			throw new Error(
 				`Failed to connect to Figma Desktop.\n\n` +
-				`Please open the Desktop Bridge plugin in Figma:\n` +
-				`  Plugins → Development → Figma Desktop Bridge\n\n` +
+				`Please open the Sparrow Bridge Plugin in Figma:\n` +
+				`  Plugins → Development → Figma Sparrow Bridge\n\n` +
 				`Error: ${error instanceof Error ? error.message : String(error)}`
 			);
 		}

@@ -99,9 +99,9 @@ MCP Apps are gated behind an environment variable and only available in Local Mo
 ```json
 {
   "mcpServers": {
-    "figma-console-local": {
+    "figma-sparrow-local": {
       "command": "node",
-      "args": ["/path/to/figma-console-mcp/dist/local.js"],
+      "args": ["/path/to/figma-sparrow-mcp/dist/local.js"],
       "env": {
         "FIGMA_ACCESS_TOKEN": "figd_YOUR_TOKEN_HERE",
         "ENABLE_MCP_APPS": "true"
@@ -173,4 +173,4 @@ Planned MCP Apps:
 
 - [MCP Apps Protocol Extension](https://github.com/anthropics/anthropic-cookbook/tree/main/misc/model_context_protocol/ext-apps) — Official specification
 - [`@modelcontextprotocol/ext-apps` on npm](https://www.npmjs.com/package/@modelcontextprotocol/ext-apps) — Client and server SDK
-- [Architecture](/architecture) — How Figma Console MCP works under the hood
+- [Architecture](/architecture) — How Figma Sparrow MCP works under the hood

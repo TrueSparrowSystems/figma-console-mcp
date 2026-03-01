@@ -1,41 +1,15 @@
 ---
 title: "Technical Architecture"
-description: "Deep dive into Figma Console MCP's architecture, deployment modes, component details, and data flows."
+description: "Deep dive into Figma Sparrow MCP's architecture, deployment modes, component details, and data flows."
 ---
 
-# Figma Console MCP - Technical Architecture
+# Figma Sparrow MCP - Technical Architecture
 
 ## Overview
 
-Figma Console MCP provides AI assistants with real-time access to Figma for debugging, design system extraction, and design creation. The server supports two deployment modes with different capabilities.
+Figma Sparrow MCP provides AI assistants with real-time access to Figma for debugging, design system extraction, and design creation. The server supports two deployment modes with different capabilities.
 
-## Deployment Modes
-
-### Remote Mode (SSE/OAuth)
-
-**Best for:** Design system extraction, API-based operations, zero-setup experience
-
-```mermaid
-flowchart TB
-    AI[AI Assistant]
-    AI -->|SSE| WORKER
-    WORKER[Cloudflare Worker]
-    WORKER --> MCP[MCP Protocol]
-    MCP --> CLIENT[REST Client]
-    CLIENT -->|HTTPS| API[Figma API]
-```
-
-**Capabilities:**
-- Design system extraction (variables, styles, components)
-- File structure queries
-- Component images
-- Console log capture (requires local)
-- Design creation (requires Desktop Bridge)
-- Variable management (requires Desktop Bridge)
-
----
-
-### Local Mode (Desktop Bridge)
+## Deployment Mode
 
 **Best for:** Plugin debugging, design creation, variable management, full capabilities
 
@@ -48,13 +22,13 @@ flowchart TB
     SERVER --> WS[WebSocket Server]
 
     REST -->|HTTPS| API[Figma API]
-    WS -->|"WebSocket :9223–9232"| PLUGIN[Desktop Bridge Plugin]
+    WS -->|"WebSocket :9223–9232"| PLUGIN[Sparrow Bridge Plugin]
 
     PLUGIN --> FILE[Design File]
 ```
 
 **Transport:**
-- **WebSocket** — via Desktop Bridge Plugin on ports 9223–9232. No debug flags needed. Supports real-time selection tracking, document change monitoring, and console capture.
+- **WebSocket** — via Sparrow Bridge Plugin on ports 9223–9232. No debug flags needed. Supports real-time selection tracking, document change monitoring, and console capture.
 - The server tries port 9223 first, then automatically falls back through ports 9224–9232 if another instance is already running (multi-instance support since v1.10.0).
 - All 56+ tools work through the WebSocket transport.
 
@@ -79,7 +53,7 @@ The main server implements the Model Context Protocol with stdio transport for l
 - Tool registration (56+ tools in Local Mode, 18 in Remote Mode)
 - Request routing and validation
 - Figma API client management
-- Desktop Bridge communication via WebSocket
+- Desktop Bridge communication via WebSocket (Sparrow Bridge)
 
 **Tool Categories:**
 
@@ -95,9 +69,9 @@ The main server implements the Model Context Protocol with stdio transport for l
 
 ---
 
-### Desktop Bridge Plugin
+### Sparrow Bridge Plugin
 
-The Desktop Bridge is a Figma plugin that runs inside Figma Desktop and provides access to the full Figma Plugin API.
+The Sparrow Bridge is a Figma plugin that runs inside Figma Desktop and provides access to the full Figma Plugin API.
 
 **Architecture:**
 
@@ -131,7 +105,7 @@ The MCP server uses a transport abstraction (`IFigmaConnector` interface) backed
 
 #### WebSocket Transport
 
-The Desktop Bridge Plugin connects via WebSocket on ports 9223–9232. No special Figma launch flags needed.
+The Sparrow Bridge Plugin connects via WebSocket on ports 9223–9232. No special Figma launch flags needed.
 
 **Features:**
 - Real-time selection tracking (`figma_get_selection`)
@@ -147,7 +121,7 @@ MCP Server ←WebSocket (ports 9223–9232)→ Plugin UI (ui.html) ←postMessag
 
 #### Multi-Instance Support (v1.10.0+)
 
-Multiple MCP server processes can run simultaneously (e.g., Claude Desktop Chat tab, Code tab, Cursor, etc.). Each server binds to the first available port in the range 9223–9232. The Desktop Bridge Plugin scans all ports in the range and connects to every active server.
+Multiple MCP server processes can run simultaneously (e.g., Claude Desktop Chat tab, Code tab, Cursor, etc.). Each server binds to the first available port in the range 9223–9232. The Sparrow Bridge Plugin scans all ports in the range and connects to every active server.
 
 #### Transport Detection
 
@@ -247,7 +221,6 @@ sequenceDiagram
 ### Authentication
 
 - **Personal Access Tokens:** Stored in environment variables, never logged
-- **OAuth Tokens:** Encrypted at rest, automatic refresh
 - **No credential storage:** Tokens passed per-request
 
 ### Sandboxing
@@ -318,12 +291,11 @@ npm run test:coverage
 ### Project Structure
 
 ```
-figma-console-mcp/
+figma-sparrow-mcp/
 ├── src/
 │   ├── local.ts          # Main MCP server (local mode)
-│   ├── index.ts          # Cloudflare Workers entry (remote mode)
 │   └── types/            # TypeScript definitions
-├── figma-desktop-bridge/
+├── figma-sparrow-bridge/
 │   ├── code.ts           # Plugin main code
 │   ├── ui.html           # Plugin UI
 │   └── manifest.json     # Plugin manifest

@@ -11,7 +11,7 @@
  * stale-file detection.
  *
  * Data flow:
- *   Server binds port → writes /tmp/figma-console-mcp-{port}.json
+ *   Server binds port → writes /tmp/figma-sparrow-mcp-{port}.json
  *   Plugin scans ports 9223-9232 → connects to first responding server
  *   External tools read port files for discovery
  */
@@ -30,7 +30,7 @@ export const DEFAULT_WS_PORT = 9223;
 export const PORT_RANGE_SIZE = 10;
 
 /** Prefix for port advertisement files in /tmp */
-const PORT_FILE_PREFIX = 'figma-console-mcp-';
+const PORT_FILE_PREFIX = 'figma-sparrow-mcp-';
 
 /** Directory for port advertisement files */
 const PORT_FILE_DIR = tmpdir();
@@ -142,7 +142,7 @@ export function readPortFile(port: number): PortFileData | null {
 }
 
 /**
- * Discover all active Figma Console MCP server instances by scanning port files.
+ * Discover all active Figma Sparrow MCP server instances by scanning port files.
  * Validates each file's PID to filter out stale entries.
  */
 export function discoverActiveInstances(preferredPort: number = DEFAULT_WS_PORT): PortFileData[] {
