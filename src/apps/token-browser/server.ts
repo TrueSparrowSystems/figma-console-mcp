@@ -23,7 +23,7 @@ import {
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-const TOKEN_BROWSER_URI = "ui://figma-console/token-browser";
+const TOKEN_BROWSER_URI = "ui://figma-sparrow/token-browser";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

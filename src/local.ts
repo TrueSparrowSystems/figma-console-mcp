@@ -4,7 +4,7 @@
  * Figma Sparrow MCP Server - Local Mode
  *
  * Entry point for local MCP server that connects to Figma Desktop
- * via the WebSocket Desktop Bridge plugin.
+ * via the WebSocket Sparrow Bridge Plugin.
  *
  * This implementation uses stdio transport for MCP communication,
  * suitable for local IDE integrations and development workflows.
@@ -53,7 +53,7 @@ const logger = createChildLogger({ component: "local-server" });
 
 /**
  * Local MCP Server
- * Connects to Figma Desktop and provides identical tools to Cloudflare mode
+ * Connects to Figma Desktop
  */
 class LocalFigmaConsoleMCP {
 	private server: McpServer;

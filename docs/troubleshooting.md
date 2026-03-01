@@ -33,7 +33,7 @@ You should see something like:
 {
   "setup": {
     "valid": true,
-    "message": "✅ Figma Desktop connected via WebSocket (Desktop Bridge Plugin)"
+    "message": "✅ Figma Desktop connected via WebSocket (Sparrow Bridge Plugin)"
   }
 }
 ```
@@ -73,7 +73,7 @@ If you see `"valid": false`, the AI will provide step-by-step setup instructions
 
 #### Plugin Connected but Commands Timeout
 **Cause:** Plugin may be running in a different Figma file than expected.
-**Fix:** The MCP server routes commands to the active file. Make sure the Desktop Bridge Plugin is running in the file you want to work with. Use `figma_get_status` to see which file is connected.
+**Fix:** The MCP server routes commands to the active file. Make sure the Sparrow Bridge Plugin is running in the file you want to work with. Use `figma_get_status` to see which file is connected.
 
 ---
 
@@ -182,7 +182,7 @@ If you're still experiencing issues:
 
 1. **MCP Server Starts:**
    - Launches WebSocket server on port 9223 (or 9224-9232 if port in use)
-   - Waits for Desktop Bridge Plugin connection
+   - Waits for Sparrow Bridge Plugin connection
 
 2. **Plugin Connects:**
    - Scans ports 9223-9232 to find active server
@@ -198,7 +198,7 @@ If you're still experiencing issues:
 
 - **Size:** 1000 logs (configurable)
 - **Type:** Circular buffer (oldest logs dropped when full)
-- **Capture:** Real-time via WebSocket (Desktop Bridge Plugin)
+- **Capture:** Real-time via WebSocket (Sparrow Bridge Plugin)
 - **Source Detection:** Automatically identifies plugin vs Figma logs
 
 ### Screenshot Capture

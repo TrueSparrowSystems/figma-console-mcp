@@ -475,7 +475,7 @@
           if (window.__figmaVariablesReady && window.__figmaVariablesData) {
             return Promise.resolve(window.__figmaVariablesData);
           }
-          return Promise.reject(new Error('Variables data not ready. Make sure the Desktop Bridge plugin has loaded.'));
+          return Promise.reject(new Error('Variables data not ready. Make sure the Sparrow Bridge Plugin has loaded.'));
         },
         'GET_FILE_INFO': function() {
           return window.sendPluginCommand('GET_FILE_INFO', {});

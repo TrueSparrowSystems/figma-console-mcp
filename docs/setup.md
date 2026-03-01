@@ -11,7 +11,7 @@ Complete setup instructions for connecting Figma Sparrow MCP to various AI clien
 
 ## 🔧 Local Git Setup
 
-**What you get:** All 56+ tools including design creation, variable management, component instantiation, and Desktop Bridge plugin support.
+**What you get:** All 56+ tools including design creation, variable management, component instantiation, and Sparrow Bridge Plugin support.
 
 ### Prerequisites
 
@@ -51,7 +51,7 @@ npm run build:local
 **Option A: CLI command (quickest)**
 
 ```bash
-claude mcp add figma-console -s user -e FIGMA_ACCESS_TOKEN=figd_YOUR_TOKEN_HERE -e ENABLE_MCP_APPS=true -- node /absolute/path/to/figma-sparrow-mcp/dist/local.js
+claude mcp add figma-sparrow -s user -e FIGMA_ACCESS_TOKEN=figd_YOUR_TOKEN_HERE -e ENABLE_MCP_APPS=true -- node /absolute/path/to/figma-sparrow-mcp/dist/local.js
 ```
 
 **Option B: Edit the config file**
@@ -62,7 +62,7 @@ claude mcp add figma-console -s user -e FIGMA_ACCESS_TOKEN=figd_YOUR_TOKEN_HERE 
 ```json
 {
   "mcpServers": {
-    "figma-console": {
+    "figma-sparrow": {
       "command": "node",
       "args": ["/absolute/path/to/figma-sparrow-mcp/dist/local.js"],
       "env": {
@@ -81,7 +81,7 @@ Edit your client's MCP config file:
 ```json
 {
   "mcpServers": {
-    "figma-console": {
+    "figma-sparrow": {
       "command": "node",
       "args": ["/absolute/path/to/figma-sparrow-mcp/dist/local.js"],
       "env": {
@@ -99,9 +99,9 @@ Edit your client's MCP config file:
 
 ### Step 4: Connect to Figma Desktop (~2 min)
 
-#### Install the Desktop Bridge Plugin
+#### Install the Sparrow Bridge Plugin
 
-The Desktop Bridge Plugin connects via WebSocket — no special Figma launch flags needed, and it persists across Figma restarts.
+The Sparrow Bridge Plugin connects via WebSocket — no special Figma launch flags needed, and it persists across Figma restarts.
 
 1. **Open Figma Desktop** (normal launch, no special flags)
 2. Go to **Plugins** → **Development** → **Import plugin from manifest...**
@@ -112,14 +112,14 @@ The Desktop Bridge Plugin connects via WebSocket — no special Figma launch fla
 
 > **One-time setup.** Once imported, the plugin stays in your Development plugins list. Just run it whenever you want to use the MCP. No need to restart Figma with special flags.
 
-**📖 [Desktop Bridge Plugin Documentation](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/tree/main/figma-sparrow-bridge)**
+**📖 [Sparrow Bridge Plugin Documentation](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/tree/main/figma-sparrow-bridge)**
 
 #### Multi-Instance / Port Conflicts
 
 If you're running multiple MCP clients (e.g., Claude Desktop Chat + Code tabs, or Claude + Cursor simultaneously), the server automatically handles port conflicts:
 
 1. **Update** to the latest version and restart your MCP client(s)
-2. **Re-import the Desktop Bridge plugin** in Figma (Plugins → Development → Import plugin from manifest). This is the critical step — the updated plugin scans ports 9223–9232 instead of only 9223
+2. **Re-import the Sparrow Bridge Plugin** in Figma (Plugins → Development → Import plugin from manifest). This is the critical step — the updated plugin scans ports 9223–9232 instead of only 9223
 3. **Run the plugin** in your Figma file — it will find whichever port each server landed on
 
 Step 2 is a one-time update. After re-importing, the plugin automatically connects to all active server instances across the full port range.
@@ -127,7 +127,7 @@ Step 2 is a one-time update. After re-importing, the plugin automatically connec
 ### Step 5: Restart Your MCP Client (~1 min)
 
 1. **Restart your MCP client** (quit and reopen Claude Code, Cursor, Windsurf, Claude Desktop, etc.)
-2. Verify the MCP server is connected (e.g., in Claude Desktop look for the 🔌 icon showing "figma-console: connected")
+2. Verify the MCP server is connected (e.g., in Claude Desktop look for the 🔌 icon showing "figma-sparrow: connected")
 
 ### Step 6: Test It! (~2 min)
 
@@ -171,7 +171,7 @@ Then restart your MCP client.
 
 | Symptom | Likely Cause | Fix |
 |---------|--------------|-----|
-| "Failed to connect to Figma Desktop" | No transport available | Install Desktop Bridge Plugin and run it in your Figma file |
+| "Failed to connect to Figma Desktop" | No transport available | Install Sparrow Bridge Plugin and run it in your Figma file |
 | "FIGMA_ACCESS_TOKEN not configured" | Missing or wrong token | Check token in config, must start with `figd_` |
 | "Command not found: node" | Node.js not installed | Install Node.js 18+ from nodejs.org |
 | Tools not appearing in MCP client | Config not loaded | Restart your MCP client completely |
@@ -197,7 +197,7 @@ If using **NVM** and having issues, try using the absolute path to Node:
 ```json
 {
   "mcpServers": {
-    "figma-console": {
+    "figma-sparrow": {
       "command": "/Users/yourname/.nvm/versions/node/v20.10.0/bin/node",
       "args": ["-e", "require('figma-sparrow-mcp')"],
       "env": {
@@ -244,7 +244,7 @@ If you set up before v1.10.0, add `"ENABLE_MCP_APPS": "true"` to the `env` secti
 
 1. **Try example prompts:** See [Use Cases](use-cases) for workflow examples
 2. **Explore all tools:** See [Tools Reference](tools) for the complete tool list
-3. **Learn about the Desktop Bridge plugin:** See [Desktop Bridge README](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/tree/main/figma-sparrow-bridge) for advanced configuration
+3. **Learn about the Sparrow Bridge Plugin:** See [Desktop Bridge README](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/tree/main/figma-sparrow-bridge) for advanced configuration
 
 ---
 

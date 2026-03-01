@@ -238,10 +238,6 @@ Build a user profile card using the Avatar and Button components
   <Accordion title="What AI assistants work with this?">
     Any MCP-compatible client: Claude Desktop, Claude Code, GitHub Copilot (VS Code 1.102+), Cursor, Windsurf, Zed, and others. If your AI tool supports MCP servers, it works with Figma Sparrow MCP.
   </Accordion>
-
-  <Accordion title="Is this free?">
-    Yes! Figma Sparrow MCP is open-source (MIT license). The hosted remote server is free to use. You can also self-host if you prefer.
-  </Accordion>
 </AccordionGroup>
 
 ---
@@ -261,7 +257,3 @@ Build a user profile card using the Avatar and Button components
 </Columns>
 
 ---
-
-<Note>
-**Open Source** — Figma Sparrow MCP is MIT licensed. Contribute, customize, or self-host for enterprise requirements on [GitHub](https://github.com/TrueSparrowSystems/figma-sparrow-mcp).
-</Note>

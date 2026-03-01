@@ -793,7 +793,7 @@ export function registerFigmaAPITools(
 				const url = fileUrl || getCurrentUrl();
 				if (!url) {
 					throw new Error(
-						"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma."
+						"No Figma file URL available. Pass the fileUrl parameter or ensure the Sparrow Bridge Plugin is open in Figma."
 					);
 				}
 
@@ -1122,7 +1122,7 @@ export function registerFigmaAPITools(
 							text: JSON.stringify(
 								{
 									error: "No Figma file URL available",
-									message: "Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma."
+									message: "Pass the fileUrl parameter or ensure the Sparrow Bridge Plugin is open in Figma."
 								}
 							),
 						},
@@ -2331,7 +2331,7 @@ export function registerFigmaAPITools(
 				const url = fileUrl || getCurrentUrl();
 				if (!url) {
 					throw new Error(
-						"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma."
+						"No Figma file URL available. Pass the fileUrl parameter or ensure the Sparrow Bridge Plugin is open in Figma."
 					);
 				}
 
@@ -2342,10 +2342,10 @@ export function registerFigmaAPITools(
 
 				logger.info({ fileKey, nodeId, format, enrich }, "Fetching component data");
 
-				// PRIORITY 1: Try Desktop Bridge plugin UI first (has reliable description field!)
+				// PRIORITY 1: Try Sparrow Bridge Plugin UI first (has reliable description field!)
 				if (getDesktopConnector || (getBrowserManager && ensureInitialized)) {
 					try {
-						logger.info({ nodeId }, "Attempting to get component via Desktop Bridge plugin UI");
+						logger.info({ nodeId }, "Attempting to get component via Sparrow Bridge Plugin UI");
 
 						let connector: any;
 						if (getDesktopConnector) {
@@ -2373,7 +2373,7 @@ export function registerFigmaAPITools(
 									hasDescriptionMarkdown: !!desktopResult.component.descriptionMarkdown,
 									annotationsCount: desktopResult.component.annotations?.length || 0
 								},
-								"Successfully retrieved component via Desktop Bridge plugin UI!"
+								"Successfully retrieved component via Sparrow Bridge Plugin UI!"
 							);
 
 							// Handle reconstruction format
@@ -2451,7 +2451,7 @@ export function registerFigmaAPITools(
 												component: formatted,
 												source: "desktop_bridge_plugin",
 												enriched: enrich || false,
-												note: "Retrieved via Desktop Bridge plugin - description fields and annotations are reliable and current"
+												note: "Retrieved via Sparrow Bridge Plugin - description fields and annotations are reliable and current"
 											}
 										),
 									},
@@ -2459,7 +2459,7 @@ export function registerFigmaAPITools(
 							};
 						}
 					} catch (desktopError) {
-						logger.warn({ error: desktopError, nodeId }, "Desktop Bridge plugin failed, falling back to REST API");
+						logger.warn({ error: desktopError, nodeId }, "Sparrow Bridge Plugin failed, falling back to REST API");
 					}
 				}
 
@@ -2479,7 +2479,7 @@ export function registerFigmaAPITools(
 						`To fix:\n` +
 						`1. Local mode: Set FIGMA_ACCESS_TOKEN environment variable, OR ensure Figma Sparrow Bridge plugin is running\n` +
 						`2. Cloud mode: Authenticate via OAuth\n` +
-						`3. Ensure the Desktop Bridge plugin is running in Figma Desktop`
+						`3. Ensure the Sparrow Bridge Plugin is running in Figma Desktop`
 					);
 				}
 
@@ -2565,7 +2565,7 @@ export function registerFigmaAPITools(
 									source: "rest_api",
 									enriched: enrich || false,
 									warning: "Retrieved via REST API - description field may be missing due to known Figma API bug",
-									action_required: formatted.description || formatted.descriptionMarkdown ? null : "To get reliable component descriptions, run the Desktop Bridge plugin in Figma Desktop: Right-click → Plugins → Development → Figma Sparrow Bridge, then try again."
+									action_required: formatted.description || formatted.descriptionMarkdown ? null : "To get reliable component descriptions, run the Sparrow Bridge Plugin in Figma Desktop: Right-click → Plugins → Development → Figma Sparrow Bridge, then try again."
 								}
 							),
 						},
@@ -2653,7 +2653,7 @@ export function registerFigmaAPITools(
 				const url = fileUrl || getCurrentUrl();
 				if (!url) {
 					throw new Error(
-						"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma."
+						"No Figma file URL available. Pass the fileUrl parameter or ensure the Sparrow Bridge Plugin is open in Figma."
 					);
 				}
 
@@ -2821,14 +2821,14 @@ export function registerFigmaAPITools(
 						`1. Local mode: Set FIGMA_ACCESS_TOKEN environment variable\n` +
 						`2. Cloud mode: Authenticate via OAuth\n\n` +
 						`Note: For component screenshots, figma_capture_screenshot may work as an alternative ` +
-						`if the Desktop Bridge plugin is connected.`
+						`if the Sparrow Bridge Plugin is connected.`
 					);
 				}
 
 				const url = fileUrl || getCurrentUrl();
 				if (!url) {
 					throw new Error(
-						"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma."
+						"No Figma file URL available. Pass the fileUrl parameter or ensure the Sparrow Bridge Plugin is open in Figma."
 					);
 				}
 
@@ -2968,14 +2968,14 @@ export function registerFigmaAPITools(
 						`1. Local mode: Set FIGMA_ACCESS_TOKEN environment variable\n` +
 						`2. Cloud mode: Authenticate via OAuth\n\n` +
 						`Note: For component metadata, figma_get_component has Desktop Bridge fallback ` +
-						`that works without token (requires the Desktop Bridge plugin to be connected).`
+						`that works without token (requires the Sparrow Bridge Plugin to be connected).`
 					);
 				}
 
 				const url = fileUrl || getCurrentUrl();
 				if (!url) {
 					throw new Error(
-						"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma."
+						"No Figma file URL available. Pass the fileUrl parameter or ensure the Sparrow Bridge Plugin is open in Figma."
 					);
 				}
 
@@ -3175,7 +3175,7 @@ export function registerFigmaAPITools(
 				const url = fileUrl || getCurrentUrl();
 				if (!url) {
 					throw new Error(
-						"No Figma file URL available. Pass the fileUrl parameter or ensure the Desktop Bridge plugin is open in Figma."
+						"No Figma file URL available. Pass the fileUrl parameter or ensure the Sparrow Bridge Plugin is open in Figma."
 					);
 				}
 
@@ -3413,7 +3413,7 @@ export function registerFigmaAPITools(
 
 				if (!result) {
 					throw new Error(
-						"Desktop Bridge plugin not found. Ensure the 'Figma Sparrow MCP' plugin is running in Figma Desktop."
+						"Sparrow Bridge Plugin not found. Ensure the 'Figma Sparrow MCP' plugin is running in Figma Desktop."
 					);
 				}
 
@@ -3541,7 +3541,7 @@ export function registerFigmaAPITools(
 
 					if (!result) {
 						throw new Error(
-							"Desktop Bridge plugin not found. Ensure the 'Figma Sparrow MCP' plugin is running in Figma Desktop."
+							"Sparrow Bridge Plugin not found. Ensure the 'Figma Sparrow MCP' plugin is running in Figma Desktop."
 						);
 					}
 

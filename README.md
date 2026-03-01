@@ -1,7 +1,6 @@
 # Figma Sparrow MCP Server
 
 [![MCP](https://img.shields.io/badge/MCP-Compatible-blue)](https://modelcontextprotocol.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Your design system as an API.** Model Context Protocol server that bridges design and development—giving AI assistants complete access to Figma for **extraction**, **creation**, and **debugging**.
 
@@ -423,7 +422,6 @@ The architecture supports adding new apps with minimal boilerplate — each app 
 ## 🚀 Advanced Topics
 
 - **[Setup Guide](docs/SETUP.md)** - Complete setup guide
-- **[Self-Hosting](docs/SELF_HOSTING.md)** - Deploy your own instance on Cloudflare
 - **[Architecture](docs/ARCHITECTURE.md)** - How it works under the hood
 - **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
 
@@ -489,12 +487,6 @@ npm run build
 ```
 
 **📖 [Development Guide](docs/ARCHITECTURE.md)**
-
----
-
-## 📄 License
-
-MIT - See [LICENSE](LICENSE) file for details.
 
 ---
 
