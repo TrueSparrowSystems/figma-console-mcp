@@ -10,6 +10,52 @@ console.log('🌉 [Desktop Bridge] Plugin loaded and ready');
 figma.showUI(__html__, { width: 120, height: 36, visible: true, themeColors: true });
 
 // ============================================================================
+// SAFE SERIALIZER — top-level so it is accessible everywhere in this file,
+// including the EXECUTE_CODE handler below the IIFE.
+// Converts every value to plain JS primitives so that figma.ui.postMessage's
+// structured-clone never encounters a Figma Symbol.
+// Root causes of "Cannot unwrap symbol":
+//   - fills[i].boundVariables.color is a VariableAlias whose internal .id is a Symbol
+//   - Any Figma API object property can internally hold Symbol-typed values
+// This function:
+//   1. Converts Symbol values to their string description
+//   2. Tracks visited objects to break circular references
+//   3. Catches per-property access errors (some Figma props throw on read)
+//   4. Only enumerates string-keyed (non-Symbol) properties via Object.keys
+// ============================================================================
+function safeSerialize(val, _seen) {
+  if (val === null || val === undefined) return val;
+  if (typeof val === 'symbol') return val.toString();
+  if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') return val;
+  if (typeof val === 'function') return '[Function]';
+  var seen = _seen || new Set();
+  if (seen.has(val)) return '[Circular]';
+  seen.add(val);
+  if (Array.isArray(val)) {
+    var arr = [];
+    for (var i = 0; i < val.length; i++) {
+      try { arr.push(safeSerialize(val[i], seen)); }
+      catch (e) { arr.push('[Error: ' + (e && e.message ? e.message : String(e)) + ']'); }
+    }
+    seen.delete(val);
+    return arr;
+  }
+  try {
+    var keys = Object.keys(val);
+    var obj = {};
+    for (var i = 0; i < keys.length; i++) {
+      try { obj[keys[i]] = safeSerialize(val[keys[i]], seen); }
+      catch (e) { obj[keys[i]] = '[Error: ' + (e && e.message ? e.message : String(e)) + ']'; }
+    }
+    seen.delete(val);
+    return obj;
+  } catch (e) {
+    seen.delete(val);
+    return '[Unserializable: ' + (e && e.message ? e.message : String(e)) + ']';
+  }
+}
+
+// ============================================================================
 // CONSOLE CAPTURE — Intercept console.* in the QuickJS sandbox and forward
 // to ui.html via postMessage so the WebSocket bridge can relay them to the MCP
 // server. This enables console monitoring without CDP.
@@ -21,16 +67,8 @@ figma.showUI(__html__, { width: 120, height: 36, visible: true, themeColors: tru
     originals[levels[i]] = console[levels[i]];
   }
 
-  function safeSerialize(val) {
-    if (val === null || val === undefined) return val;
-    if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') return val;
-    try {
-      // Attempt JSON round-trip for objects/arrays (catches circular refs)
-      return JSON.parse(JSON.stringify(val));
-    } catch (e) {
-      return String(val);
-    }
-  }
+  // safeSerialize is defined at the top level of this file (above this IIFE)
+  // so it is accessible here and in the EXECUTE_CODE handler.
 
   for (var i = 0; i < levels.length; i++) {
     (function(level) {
@@ -200,9 +238,78 @@ figma.ui.onmessage = async (msg) => {
       // AsyncFunction is restricted in Figma's plugin sandbox, but eval works
       // See: https://developers.figma.com/docs/plugins/resource-links
 
+      // Preamble: helper utilities injected before every user script.
+      // These are available to all executed code without the user needing to
+      // define them. They guard against Symbol-typed Figma internal properties
+      // that cause "cannot convert symbol to number/string" TypeErrors when
+      // accessed with numeric operators (<, >, <=, >=) or String coercion.
+      var preamble = [
+        // ── Safe property helpers ──────────────────────────────────────────────
+        // safeProp(node, key, defaultVal?):
+        //   Safely read any property from a Figma node. Returns defaultVal
+        //   (default: undefined) if the value is a Symbol, throws, or is absent.
+        'function safeProp(n, k, d) {',
+        '  try { var v = n[k]; return (typeof v === "symbol") ? d : v; }',
+        '  catch(e) { return d; }',
+        '}',
+        // safeNumProp(node, key, defaultVal?):
+        //   Like safeProp but additionally returns defaultVal if the value is not
+        //   a finite number (catches NaN and Infinity too).
+        'function safeNumProp(n, k, d) {',
+        '  try { var v = n[k]; if (typeof v === "symbol") return d; var num = Number(v); return isFinite(num) ? num : d; }',
+        '  catch(e) { return d; }',
+        '}',
+        // safeStr(val): convert any value to a string safely (Symbols included).
+        'function safeStr(v) {',
+        '  if (v === null || v === undefined) return String(v);',
+        '  if (typeof v === "symbol") return v.toString();',
+        '  return String(v);',
+        '}',
+        '',
+        // ── figmaDebug: last-access tracker ───────────────────────────────────
+        // Records the last node ID + property name your code touched so that
+        // when a TypeError fires you immediately know the culprit.
+        // Usage:
+        //   figmaDebug.track(node, 'maxWidth');  // call before each access
+        //   node.maxWidth < 99999               // ← throw here? tracker knows
+        //
+        // Or use the auto-wrapping helper:
+        //   var mw = figmaDebug.get(node, 'maxWidth', null);  // safe + tracked
+        'var figmaDebug = {',
+        '  _last: null,',
+        '  track: function(n, prop) {',
+        '    this._last = { nodeId: n && n.id, nodeName: n && n.name, nodeType: n && n.type, prop: prop, ts: Date.now() };',
+        '  },',
+        '  reset: function() { this._last = null; },',
+        '  // get(node, prop, defaultVal): track + safely read in one call',
+        '  get: function(n, prop, def) {',
+        '    this.track(n, prop);',
+        '    try { var v = n[prop]; return (typeof v === "symbol") ? def : v; }',
+        '    catch(e) { return def; }',
+        '  },',
+        '  // getNum(node, prop, defaultVal): track + safe numeric read',
+        '  getNum: function(n, prop, def) {',
+        '    this.track(n, prop);',
+        '    try {',
+        '      var v = n[prop];',
+        '      if (typeof v === "symbol" || v === null || v === undefined) return def;',
+        '      var num = Number(v);',
+        '      return isFinite(num) ? num : def;',
+        '    } catch(e) { return def; }',
+        '  },',
+        '  // report(): call in catch blocks for a human-readable summary',
+        '  report: function() {',
+        '    if (!this._last) return "(no access tracked)";',
+        '    var l = this._last;',
+        '    return "Last access → node " + l.nodeId + " (" + l.nodeName + " / " + l.nodeType + ") ." + l.prop;',
+        '  }',
+        '};',
+        ''
+      ].join('\n');
+
       // Wrap user code in an async IIFE that returns a Promise
       // This allows async/await in user code while using eval
-      var wrappedCode = "(async function() {\n" + msg.code + "\n})()";
+      var wrappedCode = "(async function() {\n" + preamble + msg.code + "\n})()";
 
       console.log('🌉 [Desktop Bridge] Wrapped code for eval');
 
@@ -273,11 +380,16 @@ figma.ui.onmessage = async (msg) => {
         console.warn('🌉 [Desktop Bridge] ⚠️ Result warning:', resultAnalysis.warning);
       }
 
+      // Deep-serialize result BEFORE postMessage to strip any Figma Symbol
+      // values (e.g. boundVariables internals) that would cause structured-clone
+      // to throw "Cannot unwrap symbol" even when accessed read-only.
+      var safeResult = safeSerialize(result);
+
       figma.ui.postMessage({
         type: 'EXECUTE_CODE_RESULT',
         requestId: msg.requestId,
         success: true,
-        result: result,
+        result: safeResult,
         resultAnalysis: resultAnalysis,
         // Include file context so users know which file this executed against
         fileContext: {
@@ -298,11 +410,47 @@ figma.ui.onmessage = async (msg) => {
         console.error('🌉 [Desktop Bridge] Stack:', errorStack);
       }
 
+      // ── Symbol / type diagnostic ──────────────────────────────────────────
+      // Figma stores internal IDs as Symbols on certain node properties
+      // (e.g. maxWidth, minWidth, boundVariables internals). Accessing them
+      // with numeric operators (<, >) throws "cannot convert symbol to number".
+      // Detect this class of error and give an actionable hint.
+      var isSymbolError = errorMsg && (
+        errorMsg.indexOf('symbol') !== -1 ||
+        errorMsg.indexOf('Symbol') !== -1 ||
+        errorMsg.indexOf('unwrap') !== -1
+      );
+      if (isSymbolError) {
+        console.error('🌉 [Desktop Bridge] 💡 Symbol error detected. A Figma node property returned a Symbol instead of a number/string.');
+        console.error('🌉 [Desktop Bridge] 💡 Common culprits: maxWidth, minWidth, maxHeight, minHeight, boundVariables, layoutGrow, itemSpacing on INSTANCE nodes.');
+        console.error('🌉 [Desktop Bridge] 💡 Fix: guard with typeof check → if (typeof node.maxWidth === "number" && node.maxWidth < 99999)');
+        console.error('🌉 [Desktop Bridge] 💡 Or use the injected helper → figmaDebug.getNum(node, "maxWidth", null)');
+        // Try to retrieve figmaDebug last-access report from the eval scope
+        // (it is defined in the preamble, so it lives in the outer function scope)
+        try {
+          // figmaDebug is declared inside the eval IIFE scope so we can't
+          // reach it from here directly — but we logged .track() calls to
+          // console above, so user can correlate. Emit a reminder instead.
+          console.error('🌉 [Desktop Bridge] 💡 Add figmaDebug.track(node, "propName") before each access, or use figmaDebug.get()/getNum() — on error call figmaDebug.report() in your catch block to identify the exact property.');
+        } catch(_) {}
+      }
+
+      // Emit a structured error back to the caller with extra debug fields
+      var debugInfo = {
+        errorName: errorName,
+        errorMsg: errorMsg,
+        isSymbolError: isSymbolError,
+        hint: isSymbolError
+          ? 'Guard numeric Figma props: typeof node.prop === "number". Use figmaDebug.getNum(node,"prop",null) for safe access.'
+          : null
+      };
+
       figma.ui.postMessage({
         type: 'EXECUTE_CODE_RESULT',
         requestId: msg.requestId,
         success: false,
-        error: errorName + ': ' + errorMsg
+        error: errorName + ': ' + errorMsg,
+        debug: debugInfo
       });
     }
   }
