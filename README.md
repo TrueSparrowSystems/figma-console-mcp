@@ -214,8 +214,6 @@ Take a screenshot of the current Figma canvas
 Navigate to this file and capture what's on screen
 ```
 
-**📖 [More Use Cases & Examples](docs/USE_CASES.md)**
-
 ---
 
 ## 🎨 AI-Assisted Design Creation
@@ -383,13 +381,3 @@ npm run build
 ```
 
 **📖 [Development Guide](docs/ARCHITECTURE.md)**
-
----
-
-## 🔗 Links
-
-- 📖 [Local Docs](docs/) — Documentation source files
-- 🐛 [Report Issues](https://github.com/TrueSparrowSystmes/figma-sparrow-mcp/issues)
-- 💬 [Discussions](https://github.com/TrueSparrowSystems/figma-sparrow-mcp/discussions)
-- 🌐 [Model Context Protocol](https://modelcontextprotocol.io/)
-- 🎨 [Figma API](https://www.figma.com/developers/api)
