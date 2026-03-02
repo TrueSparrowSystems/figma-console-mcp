@@ -2,10 +2,6 @@
 
 [![MCP](https://img.shields.io/badge/MCP-Compatible-blue)](https://modelcontextprotocol.io/)
 
-> **Your design system as an API.** Model Context Protocol server that bridges design and development—giving AI assistants complete access to Figma for **extraction**, **creation**, and **debugging**.
-
-> **🆕 v1.11.1 — Doc Generator Fixes:** Cleaner `figma_generate_component_doc` output—proper markdown tables, filtered property metadata, Storybook links.
-
 ## What is this?
 
 Figma Sparrow MCP connects AI assistants (like Claude) to Figma, enabling:
@@ -50,7 +46,9 @@ Add to your config file:
       "args": ["/absolute/path/to/figma-sparrow-mcp/dist/local.js"],
       "env": {
         "FIGMA_ACCESS_TOKEN": "figd_YOUR_TOKEN_HERE",
-        "ENABLE_MCP_APPS": "true"
+        "ENABLE_MCP_APPS": "true",
+        // optional
+        "READ_ONLY": "false" 
       }
     }
   }
@@ -58,6 +56,24 @@ Add to your config file:
 ```
 
 **📖 [Complete Setup Guide](docs/setup.md)**
+
+---
+
+## 🎨 Sparrow Bridge Plugin (Recommended Connection)
+
+The **Figma Sparrow Bridge** plugin is the recommended way to connect Figma to the MCP server. It communicates via WebSocket — no special Figma launch flags needed, and it persists across Figma restarts.
+
+### Setup
+
+1. Open Figma Desktop (normal launch — no debug flags needed)
+2. Go to **Plugins → Development → Import plugin from manifest...**
+3. Select `figma-sparrow-bridge/manifest.json` from the figma-sparrow-mcp directory
+4. Run the plugin in your Figma file — it auto-connects via WebSocket (scans ports 9223–9232)
+5. Ask your AI: "Check Figma status" to verify the connection
+
+> **One-time import.** Once imported, the plugin stays in your Development plugins list. Just run it whenever you want to use the MCP.
+
+**📖 [Sparrow Bridge Documentation](figma-sparrow-bridge/README.md)**
 
 ---
 
@@ -281,35 +297,6 @@ This ensures designs aren't just technically correct—they *look* right.
 
 ---
 
-## 🎨 Sparrow Bridge Plugin (Recommended Connection)
-
-The **Figma Sparrow Bridge** plugin is the recommended way to connect Figma to the MCP server. It communicates via WebSocket — no special Figma launch flags needed, and it persists across Figma restarts.
-
-### Setup
-
-1. Open Figma Desktop (normal launch — no debug flags needed)
-2. Go to **Plugins → Development → Import plugin from manifest...**
-3. Select `figma-sparrow-bridge/manifest.json` from the figma-sparrow-mcp directory
-4. Run the plugin in your Figma file — it auto-connects via WebSocket (scans ports 9223–9232)
-5. Ask your AI: "Check Figma status" to verify the connection
-
-> **One-time import.** Once imported, the plugin stays in your Development plugins list. Just run it whenever you want to use the MCP.
-
-**📖 [Sparrow Bridge Documentation](figma-sparrow-bridge/README.md)**
-
-### Capabilities
-
-**Read Operations:**
-- Variables without Enterprise API
-- Reliable component descriptions (bypasses API bugs)
-- Multi-mode support (Light/Dark/Brand variants)
-- Real-time selection tracking and document change monitoring
-
-**Write Operations:**
-- **Design Creation** - Create frames, shapes, text, components via `figma_execute`
-- **Variable Management** - Full CRUD operations on variables and collections
-- **Mode Management** - Add and rename modes for multi-theme support
-
 ### How the Transport Works
 
 - The MCP server communicates via **WebSocket** through the Sparrow Bridge plugin
@@ -324,40 +311,6 @@ The **Figma Sparrow Bridge** plugin is the recommended way to connect Figma to t
 - `FIGMA_WS_HOST` — Override the WebSocket server bind address (default: `localhost`). Set to `0.0.0.0` when running inside Docker so the host machine can reach the MCP server.
 
 **Plugin Limitation:** Only works in Local Git mode.
-
----
-
-## 🔀 Multi-Instance Support (v1.10.0)
-
-Figma Sparrow MCP now supports **multiple simultaneous instances** — perfect for designers and developers who work across multiple projects or use Claude Desktop's Chat and Code tabs at the same time.
-
-### The Problem (Before v1.10.0)
-
-When two processes tried to start the MCP server (e.g., Claude Desktop's Chat tab and Code tab), the second one would crash with `EADDRINUSE` because both competed for port 9223.
-
-### How It Works Now
-
-- The server tries port **9223** first (the default)
-- If that port is already taken, it automatically tries **9224**, then **9225**, and so on up to **9232**
-- The Sparrow Bridge plugin in Figma connects to **all** active servers simultaneously
-- Every server instance receives real-time events (selection changes, document changes, console logs)
-- `figma_get_status` shows which port you're on and lists other active instances
-
-### What This Means for You
-
-| Scenario | Before v1.10.0 | Now |
-|----------|----------------|-----|
-| Two Claude Desktop tabs (Chat + Code) | Second tab crashes | Both work independently |
-| Multiple CLI terminals on different projects | Only one can run | All run simultaneously |
-| Claude Desktop + Claude Code CLI | Port conflict | Both coexist |
-
-### Do I Need to Do Anything?
-
-**If you're running a single instance:** Nothing changes. You'll still use port 9223 as before.
-
-**If you want multi-instance:** Re-import the Sparrow Bridge plugin in Figma (Plugins → Development → Import plugin from manifest). This updates the plugin to scan all ports and connect to every active server.
-
-> **Note:** The server-side update happens automatically when you update the npm package. Only the plugin needs a one-time re-import to enable multi-connection support.
 
 ---
 
@@ -407,16 +360,6 @@ MCP Apps are enabled by default in the setup configurations above (via `"ENABLE_
 
 > **Note:** MCP Apps require an MCP client with [ext-apps protocol](https://github.com/anthropics/anthropic-cookbook/tree/main/misc/model_context_protocol/ext-apps) support (e.g. Claude Desktop). This feature is experimental and the protocol may evolve.
 
-### Future MCP Apps Roadmap
-
-Planned MCP Apps:
-
-- **Component Gallery** — Visual browser for searching and previewing components with variant exploration
-- **Style Inspector** — Interactive panel for exploring color, text, and effect styles with live previews
-- **Variable Diff Viewer** — Side-by-side comparison of token values across modes and branches
-
-The architecture supports adding new apps with minimal boilerplate — each app is a self-contained module with its own server-side tool registration and client-side UI.
-
 ---
 
 ## 🚀 Advanced Topics
@@ -424,48 +367,6 @@ The architecture supports adding new apps with minimal boilerplate — each app 
 - **[Setup Guide](docs/SETUP.md)** - Complete setup guide
 - **[Architecture](docs/ARCHITECTURE.md)** - How it works under the hood
 - **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
-
----
-
-## 🤝 vs. Figma Official MCP
-
-**Figma Sparrow MCP (This Project)** - Debugging & data extraction
-- ✅ Real-time console logs from Figma plugins
-- ✅ Screenshot capture and visual debugging
-- ✅ Error stack traces and runtime monitoring
-- ✅ Raw design data extraction (JSON)
-- ✅ Works locally
-
-**Figma Official Dev Mode MCP** - Code generation
-- ✅ Generates React/HTML code from designs
-- ✅ Tailwind/CSS class generation
-- ✅ Component boilerplate scaffolding
-
-**Use both together** for the complete workflow: generate code with Official MCP, then debug and extract data with Sparrow MCP.
-
----
-
-## 🛤️ Roadmap
-
-**Current Status:** v1.11.1 (Stable) - Production-ready with WebSocket-only connectivity, smart multi-file tracking, 56+ tools, Comments API, and MCP Apps
-
-**Recent Releases:**
-- [x] **v1.11.1** - Doc generator fixes: clean markdown tables, Storybook links, property metadata filtering
-- [x] **v1.11.0** - Complete CDP removal, improved multi-file active tracking with focus detection
-- [x] **v1.10.0** - Multi-instance support (dynamic port fallback 9223–9232, multi-connection plugin, instance discovery)
-- [x] **v1.9.0** - Figma Comments tools, improved port conflict detection
-- [x] **v1.8.0** - WebSocket Bridge transport (CDP-free connectivity), real-time selection/document tracking, `figma_get_selection` + `figma_get_design_changes` tools
-- [x] **v1.7.0** - MCP Apps (Token Browser, Design System Dashboard), batch variable operations, design-code parity tools
-- [x] **v1.5.0** - Node manipulation tools, component property management, component set arrangement
-- [x] **v1.3.0** - Design creation via `figma_execute`, variable CRUD operations
-
-**Coming Next:**
-- [ ] **Component template library** - Common UI pattern generation
-- [ ] **Visual regression testing** - Screenshot diff capabilities
-- [ ] **Design linting** - Automated compliance and accessibility checks
-- [ ] **AI enhancements** - Intelligent component suggestions and auto-layout optimization
-
-**📖 [Full Roadmap](docs/ROADMAP.md)**
 
 ---
 
