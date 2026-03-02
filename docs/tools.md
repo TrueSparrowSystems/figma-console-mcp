@@ -116,7 +116,7 @@ figma_get_status()
   "mode": "local",
   "setup": {
     "valid": true,
-    "message": "✅ Figma Desktop connected via WebSocket (Desktop Bridge Plugin)"
+    "message": "✅ Figma Desktop connected via WebSocket (Sparrow Bridge Plugin)"
   }
 }
 ```
@@ -129,7 +129,7 @@ figma_get_status()
     "valid": false,
     "message": "❌ No connection to Figma Desktop",
     "setupInstructions": {
-      "step1": "Install Desktop Bridge Plugin: Figma → Plugins → Development → Import from manifest",
+      "step1": "Install Sparrow Bridge Plugin: Figma → Plugins → Development → Import from manifest",
       "step2": "Run the plugin in your Figma file"
     }
   }
@@ -138,7 +138,7 @@ figma_get_status()
 
 **Best Practice:**
 - Call this tool first when starting a session in local mode
-- If `setup.valid` is false, guide user to install and run the Desktop Bridge Plugin
+- If `setup.valid` is false, guide user to install and run the Sparrow Bridge Plugin
 
 ---
 
@@ -571,7 +571,7 @@ figma_get_file_for_plugin({
 
 ## ✏️ Design Creation Tools (Local Mode Only)
 
-> **⚠️ Requires Desktop Bridge Plugin**: These tools only work in Local Mode with the Desktop Bridge plugin running in Figma.
+> **⚠️ Requires Sparrow Bridge Plugin**: These tools only work in Local Mode with the Sparrow Bridge Plugin running in Figma.
 
 ### `figma_execute`
 
@@ -665,7 +665,7 @@ frame.paddingRight = 16;
 
 ## 🔧 Variable Management Tools (Local Mode Only)
 
-> **⚠️ Requires Desktop Bridge Plugin**: These tools only work in Local Mode with the Desktop Bridge plugin running in Figma.
+> **⚠️ Requires Sparrow Bridge Plugin**: These tools only work in Local Mode with the Sparrow Bridge Plugin running in Figma.
 
 ### `figma_create_variable_collection`
 
@@ -1053,7 +1053,7 @@ figma_setup_design_tokens({
 
 ## 🧩 Component Tools (Local Mode Only)
 
-> **⚠️ Requires Desktop Bridge Plugin**: These tools only work in Local Mode with the Desktop Bridge plugin running in Figma.
+> **⚠️ Requires Sparrow Bridge Plugin**: These tools only work in Local Mode with the Sparrow Bridge Plugin running in Figma.
 
 ### `figma_search_components`
 
@@ -1486,8 +1486,8 @@ figma_get_token_values({
 
 Before using write tools, ensure:
 1. ✅ Running in **Local Mode** (not Remote SSE)
-2. ✅ Connected to Figma Desktop via **Desktop Bridge Plugin**
-3. ✅ **Desktop Bridge plugin** is running in your Figma file
+2. ✅ Connected to Figma Desktop via **Sparrow Bridge Plugin**
+3. ✅ **Sparrow Bridge Plugin** is running in your Figma file
 4. ✅ `figma_get_status` returns `setup.valid: true`
 
 ---
@@ -1755,7 +1755,7 @@ Common errors:
 - `"Failed to connect to browser"` - Browser initializing or connection issue
 - `"Invalid Figma URL"` - Check URL format
 - `"Node not found"` - Verify node ID is correct
-- `"Desktop Bridge plugin not found"` - Ensure plugin is running in Figma
+- `"Sparrow Bridge Plugin not found"` - Ensure plugin is running in Figma
 - `"Invalid hex color"` - Check hex format (use #RGB, #RGBA, #RRGGBB, or #RRGGBBAA)
 
 See [Troubleshooting Guide](TROUBLESHOOTING.md) for detailed solutions.

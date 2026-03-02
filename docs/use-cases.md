@@ -5,7 +5,7 @@ description: "Real-world scenarios for plugin debugging, design system extractio
 
 # Use Cases & Scenarios
 
-This guide shows real-world scenarios for using Figma Console MCP in your workflow.
+This guide shows real-world scenarios for using Figma Sparrow MCP in your workflow.
 
 ## 🐛 Plugin Development & Debugging
 
@@ -14,7 +14,7 @@ This guide shows real-world scenarios for using Figma Console MCP in your workfl
 **Your situation:** You're developing a Figma plugin and want to see console output.
 
 **One-time setup:** Connect to Figma Desktop using one of these methods:
-- Install the Desktop Bridge Plugin (Plugins → Development → Import from manifest) and run it in your file
+- Install the Sparrow Bridge Plugin (Plugins → Development → Import from manifest) and run it in your file
 
 Then open your design file and run your plugin.
 
@@ -235,14 +235,14 @@ Then run your plugin in Figma Desktop, and say:
 
 ## ✏️ Design Creation (Local Mode)
 
-These scenarios require Local Mode with the Desktop Bridge plugin installed. They enable AI-assisted design creation directly in Figma.
+These scenarios require Local Mode with the Sparrow Bridge Plugin installed. They enable AI-assisted design creation directly in Figma.
 
 ### Scenario 11: Create Component Variants with Variables
 
 **Your situation:** You want to create a complete button component set with multiple variants, sizes, and states—all bound to design system variables.
 
 **Prerequisites:**
-- Local mode with Desktop Bridge plugin running
+- Local mode with Sparrow Bridge Plugin running
 - Design system variables defined (colors, spacing, radius)
 
 **What to say:**
@@ -588,7 +588,7 @@ This workflow leverages the screenshot feedback loop for precise design control.
 
 **Workflow:**
 1. Use Figma Dev Mode MCP to generate component code
-2. Use Figma Console MCP to get design token values
+2. Use Figma Sparrow MCP to get design token values
 3. Replace hardcoded values with tokens
 4. Use Console MCP to debug when integrated
 
