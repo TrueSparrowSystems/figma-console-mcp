@@ -48,14 +48,12 @@ Add to your config file:
         "FIGMA_ACCESS_TOKEN": "figd_YOUR_TOKEN_HERE",
         "ENABLE_MCP_APPS": "true",
         // optional
-        "READ_ONLY": "false" 
+        "FIGMA_READ_ONLY": "true" 
       }
     }
   }
 }
 ```
-
-**📖 [Complete Setup Guide](docs/setup.md)**
 
 ---
 
@@ -72,8 +70,6 @@ The **Figma Sparrow Bridge** plugin is the recommended way to connect Figma to t
 5. Ask your AI: "Check Figma status" to verify the connection
 
 > **One-time import.** Once imported, the plugin stays in your Development plugins list. Just run it whenever you want to use the MCP.
-
-**📖 [Sparrow Bridge Documentation](figma-sparrow-bridge/README.md)**
 
 ---
 
@@ -364,7 +360,6 @@ MCP Apps are enabled by default in the setup configurations above (via `"ENABLE_
 
 ## 🚀 Advanced Topics
 
-- **[Setup Guide](docs/SETUP.md)** - Complete setup guide
 - **[Architecture](docs/ARCHITECTURE.md)** - How it works under the hood
 - **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
 
