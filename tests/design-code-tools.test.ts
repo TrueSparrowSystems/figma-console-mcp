@@ -158,7 +158,7 @@ describe("Design-Code Tools Helpers", () => {
 			expect(entry.content).toContain("# Button");
 			expect(entry.category).toBe("components");
 			expect(entry.tags).toContain("button");
-			expect(entry.metadata.source).toBe("figma-console-mcp");
+			expect(entry.metadata.source).toBe("figma-sparrow-mcp");
 			expect(entry.metadata.figmaUrl).toBe("https://figma.com/design/abc123");
 			expect(entry.metadata.systemName).toBe("MyDS");
 			expect(entry.metadata.generatedAt).toBeTruthy();

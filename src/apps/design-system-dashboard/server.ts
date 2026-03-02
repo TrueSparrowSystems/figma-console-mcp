@@ -25,7 +25,7 @@ import { z } from "zod";
 import { scoreDesignSystem } from "./scoring/engine.js";
 import type { DashboardData, DesignSystemRawData } from "./scoring/types.js";
 
-const DASHBOARD_URI = "ui://figma-console/design-system-dashboard";
+const DASHBOARD_URI = "ui://figma-sparrow/design-system-dashboard";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

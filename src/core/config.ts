@@ -1,5 +1,5 @@
 /**
- * Configuration management for Figma Console MCP server
+ * Configuration management for Figma Sparrow MCP server
  */
 
 import { readFileSync, existsSync } from 'fs';
@@ -53,7 +53,7 @@ const DEFAULT_CONFIG: ServerConfig = {
   screenshots: {
     defaultFormat: 'png',
     quality: 90,
-    storePath: join(process.env.TMPDIR || '/tmp', 'figma-console-mcp', 'screenshots'),
+    storePath: join(process.env.TMPDIR || '/tmp', 'figma-sparrow-mcp', 'screenshots'),
   },
   local: {
     debugHost: process.env.FIGMA_DEBUG_HOST || 'localhost',
@@ -68,11 +68,11 @@ const CONFIG_PATHS = [
   // Environment variable override
   process.env.FIGMA_CONSOLE_CONFIG,
   // Project-local config
-  join(process.cwd(), '.figma-console-mcp.json'),
-  join(process.cwd(), 'figma-console-mcp.json'),
+  join(process.cwd(), '.figma-sparrow-mcp.json'),
+  join(process.cwd(), 'figma-sparrow-mcp.json'),
   // User home config
-  join(homedir(), '.config', 'figma-console-mcp', 'config.json'),
-  join(homedir(), '.figma-console-mcp.json'),
+  join(homedir(), '.config', 'figma-sparrow-mcp', 'config.json'),
+  join(homedir(), '.figma-sparrow-mcp.json'),
 ].filter((path): path is string => path !== undefined);
 
 /**

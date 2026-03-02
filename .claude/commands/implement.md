@@ -4,7 +4,7 @@ Implement a feature or fix using best practices for this MCP server project.
 
 ## Instructions
 
-When implementing features for the Figma Console MCP server:
+When implementing features for the Figma Sparrow MCP server:
 
 1. **Use MCP SDK Patterns**
    - Follow Model Context Protocol TypeScript SDK conventions
