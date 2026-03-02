@@ -94,11 +94,9 @@ web_modules/
 
 # dotenv environment variable files
 
-.env
 .env.development.local
 .env.test.local
 .env.production.local
-.env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 
@@ -166,11 +164,6 @@ dist
 .yarn/install-state.gz
 .pnp.\*
 
-# wrangler project
-
-.dev.vars
-.wrangler/
-
 # macOS
 .DS_Store
 .AppleDouble
@@ -208,8 +201,8 @@ Temporary Items
 .playwright-mcp/
 
 # VS Code MCP config (contains tokens)
-.vscode/mcp.json
 .env.mcp
 
 # Internal notes and drafts
 .notes/
+config.bat

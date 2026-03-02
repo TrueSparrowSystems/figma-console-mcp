@@ -64,12 +64,12 @@ describe('Port Discovery Module', () => {
     it('should return a path in the temp directory', () => {
       const path = getPortFilePath(9223);
       expect(path).toContain(tmpdir());
-      expect(path).toContain('figma-console-mcp-9223.json');
+      expect(path).toContain('figma-sparrow-mcp-9223.json');
     });
 
     it('should include the port number in the filename', () => {
       const path = getPortFilePath(TEST_PORT_BASE);
-      expect(path).toContain(`figma-console-mcp-${TEST_PORT_BASE}.json`);
+      expect(path).toContain(`figma-sparrow-mcp-${TEST_PORT_BASE}.json`);
     });
   });
 

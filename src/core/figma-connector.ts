@@ -1,7 +1,7 @@
 /**
  * Figma Connector Interface
  *
- * Transport abstraction for the WebSocket Desktop Bridge plugin.
+ * Transport abstraction for the WebSocket Sparrow Bridge Plugin.
  * Allows getDesktopConnector() to return the active WebSocket transport.
  */
 
